@@ -409,10 +409,10 @@ THREE.TrackballControls = function(object, domElement) {
     var changeEvent = {
       type: 'change'
     };
-    /*      var startEvent = {
-            type: 'start'
-          };
-          var endEvent = {
+    var startEvent = {
+      type: 'start'
+    };
+    /*      var endEvent = {
             type: 'end'
           };
 

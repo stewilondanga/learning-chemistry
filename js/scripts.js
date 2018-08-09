@@ -389,10 +389,10 @@ THREE.TrackballControls = function(object, domElement) {
       _rotateStart = new THREE.Vector3(),
       _rotateEnd = new THREE.Vector3(),
 
-      /*        _zoomStart = new THREE.Vector2(),
-              _zoomEnd = new THREE.Vector2(),
+      _zoomStart = new THREE.Vector2(),
+      _zoomEnd = new THREE.Vector2(),
 
-              _touchZoomDistanceStart = 0,
+      /*        _touchZoomDistanceStart = 0,
               _touchZoomDistanceEnd = 0,
 
               _panStart = new THREE.Vector2(),

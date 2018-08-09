@@ -1,3 +1,7 @@
+html, body {
+	height: 100%;
+}
+
 /*body {
   text-align: center;
   font-family: courier;
@@ -6,7 +10,7 @@
   background-size: 100%;
 }
 
-.my_social {
+/*.my_social {
   position: absolute;
   top: 25px;
   left: 25px;
@@ -19,16 +23,6 @@
 
 .my_social a img {
   height: 1.5em;
-}
-
-.containers {
-  width: 520px;
-  margin: 20px auto;
-}
-
-
-html, body {
-	height: 100%;
 }
 
 body {
@@ -121,7 +115,13 @@ button:active {
 }
 
 
-/*#contact h1 {
+/*
+.containers {
+  width: 520px;
+  margin: 20px auto;
+}
+
+#contact h1 {
   font-family: helvetica;
   font-weight: normal;
   text-align: center;

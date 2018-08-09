@@ -342,36 +342,36 @@ THREE.TrackballControls = function(object, domElement) {
     TOUCH_PAN: 5
   };
 
-  /*this.object = object;
+  this.object = object;
   this.domElement = (domElement !== undefined) ? domElement : document;
 
   // API
 
-  this.enabled = true;
+  /*  this.enabled = true;
 
-  this.screen = {
-    left: 0,
-    top: 0,
-    width: 0,
-    height: 0
-  };
+    this.screen = {
+      left: 0,
+      top: 0,
+      width: 0,
+      height: 0
+    };
 
-  this.rotateSpeed = 1.0;
-  this.zoomSpeed = 1.2;
-  this.panSpeed = 0.3;
+    this.rotateSpeed = 1.0;
+    this.zoomSpeed = 1.2;
+    this.panSpeed = 0.3;
 
-  this.noRotate = false;
-  this.noZoom = false;
-  this.noPan = false;
-  this.noRoll = false;
+    this.noRotate = false;
+    this.noZoom = false;
+    this.noPan = false;
+    this.noRoll = false;
 
-  this.staticMoving = false;
-  this.dynamicDampingFactor = 0.2;
+    this.staticMoving = false;
+    this.dynamicDampingFactor = 0.2;
 
-  this.minDistance = 0;
-  this.maxDistance = Infinity;
+    this.minDistance = 0;
+    this.maxDistance = Infinity;
 
-  this.keys = [65 /*A*/
+    this.keys = [65 /*A*/
   , 83 /*S*/ , 68 /*D*/ ];
 
 // internals

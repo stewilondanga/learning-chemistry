@@ -589,366 +589,366 @@ THREE.TrackballControls = function(object, domElement) {
 
           return function() {
 
-              /*                                                                                                                  mouseChange.copy(_panEnd).sub(_panStart);
+              mouseChange.copy(_panEnd).sub(_panStart);
 
-                                                                                                                                if (mouseChange.lengthSq()) {
+              /*                                                                                                                      if (mouseChange.lengthSq()) {
 
-                                                                                                                                  mouseChange.multiplyScalar(_eye.length() * _this.panSpeed);
+                                                                                                                                      mouseChange.multiplyScalar(_eye.length() * _this.panSpeed);
 
-                                                                                                                                  pan.copy(_eye).cross(_this.object.up).setLength(mouseChange.x);
-                                                                                                                                  pan.add(objectUp.copy(_this.object.up).setLength(mouseChange.y));
+                                                                                                                                      pan.copy(_eye).cross(_this.object.up).setLength(mouseChange.x);
+                                                                                                                                      pan.add(objectUp.copy(_this.object.up).setLength(mouseChange.y));
 
-                                                                                                                                  _this.object.position.add(pan);
-                                                                                                                                  _this.target.add(pan);
+                                                                                                                                      _this.object.position.add(pan);
+                                                                                                                                      _this.target.add(pan);
 
-                                                                                                                                  if (_this.staticMoving) {
+                                                                                                                                      if (_this.staticMoving) {
 
-                                                                                                                                    _panStart.copy(_panEnd);
+                                                                                                                                        _panStart.copy(_panEnd);
 
-                                                                                                                                  } else {
+                                                                                                                                      } else {
 
-                                                                                                                                    _panStart.add(mouseChange.subVectors(_panEnd, _panStart).multiplyScalar(_this.dynamicDampingFactor));
+                                                                                                                                        _panStart.add(mouseChange.subVectors(_panEnd, _panStart).multiplyScalar(_this.dynamicDampingFactor));
+
+                                                                                                                                      }
+
+                                                                                                                                    }
+                                                                                                                                  }
+
+                                                                                                                                }());
+
+                                                                                                                                this.checkDistances = function() {
+
+                                                                                                                                  if (!_this.noZoom || !_this.noPan) {
+
+                                                                                                                                    if (_eye.lengthSq() > _this.maxDistance * _this.maxDistance) {
+
+                                                                                                                                      _this.object.position.addVectors(_this.target, _eye.setLength(_this.maxDistance));
+
+                                                                                                                                    }
+
+                                                                                                                                    if (_eye.lengthSq() < _this.minDistance * _this.minDistance) {
+
+                                                                                                                                      _this.object.position.addVectors(_this.target, _eye.setLength(_this.minDistance));
+
+                                                                                                                                    }
+
+                                                                                                                                  }
+
+                                                                                                                                };
+
+                                                                                                                                this.update = function() {
+
+                                                                                                                                  _eye.subVectors(_this.object.position, _this.target);
+
+                                                                                                                                  if (!_this.noRotate) {
+
+                                                                                                                                    _this.rotateCamera();
+
+                                                                                                                                  }
+
+                                                                                                                                  if (!_this.noZoom) {
+
+                                                                                                                                    _this.zoomCamera();
+
+                                                                                                                                  }
+
+                                                                                                                                  if (!_this.noPan) {
+
+                                                                                                                                    _this.panCamera();
+
+                                                                                                                                  }
+
+                                                                                                                                  _this.object.position.addVectors(_this.target, _eye);
+
+                                                                                                                                  _this.checkDistances();
+
+                                                                                                                                  _this.object.lookAt(_this.target);
+
+                                                                                                                                  if (lastPosition.distanceToSquared(_this.object.position) > EPS) {
+
+                                                                                                                                    _this.dispatchEvent(changeEvent);
+
+                                                                                                                                    lastPosition.copy(_this.object.position);
+
+                                                                                                                                  }
+
+                                                                                                                                };
+
+                                                                                                                                this.reset = function() {
+
+                                                                                                                                  _state = STATE.NONE;
+                                                                                                                                  _prevState = STATE.NONE;
+
+                                                                                                                                  _this.target.copy(_this.target0);
+                                                                                                                                  _this.object.position.copy(_this.position0);
+                                                                                                                                  _this.object.up.copy(_this.up0);
+
+                                                                                                                                  _eye.subVectors(_this.object.position, _this.target);
+
+                                                                                                                                  _this.object.lookAt(_this.target);
+
+                                                                                                                                  _this.dispatchEvent(changeEvent);
+
+                                                                                                                                  lastPosition.copy(_this.object.position);
+
+                                                                                                                                };
+
+                                                                                                                                // listeners
+
+                                                                                                                                function keydown(event) {
+
+                                                                                                                                  if (_this.enabled === false) return;
+
+                                                                                                                                  window.removeEventListener('keydown', keydown);
+
+                                                                                                                                  _prevState = _state;
+
+                                                                                                                                  if (_state !== STATE.NONE) {
+
+                                                                                                                                    return;
+
+                                                                                                                                  } else if (event.keyCode === _this.keys[STATE.ROTATE] && !_this.noRotate) {
+
+                                                                                                                                    _state = STATE.ROTATE;
+
+                                                                                                                                  } else if (event.keyCode === _this.keys[STATE.ZOOM] && !_this.noZoom) {
+
+                                                                                                                                    _state = STATE.ZOOM;
+
+                                                                                                                                  } else if (event.keyCode === _this.keys[STATE.PAN] && !_this.noPan) {
+
+                                                                                                                                    _state = STATE.PAN;
 
                                                                                                                                   }
 
                                                                                                                                 }
-                                                                                                                              }
 
-                                                                                                                            }());
+                                                                                                                                function keyup(event) {
 
-                                                                                                                            this.checkDistances = function() {
+                                                                                                                                  if (_this.enabled === false) return;
 
-                                                                                                                              if (!_this.noZoom || !_this.noPan) {
+                                                                                                                                  _state = _prevState;
 
-                                                                                                                                if (_eye.lengthSq() > _this.maxDistance * _this.maxDistance) {
-
-                                                                                                                                  _this.object.position.addVectors(_this.target, _eye.setLength(_this.maxDistance));
+                                                                                                                                  window.addEventListener('keydown', keydown, false);
 
                                                                                                                                 }
 
-                                                                                                                                if (_eye.lengthSq() < _this.minDistance * _this.minDistance) {
+                                                                                                                                function mousedown(event) {
 
-                                                                                                                                  _this.object.position.addVectors(_this.target, _eye.setLength(_this.minDistance));
+                                                                                                                                  if (_this.enabled === false) return;
+
+                                                                                                                                  event.preventDefault();
+                                                                                                                                  event.stopPropagation();
+
+                                                                                                                                  if (_state === STATE.NONE) {
+
+                                                                                                                                    _state = event.button;
+
+                                                                                                                                  }
+
+                                                                                                                                  if (_state === STATE.ROTATE && !_this.noRotate) {
+
+                                                                                                                                    _this.getMouseProjectionOnBall(event.pageX, event.pageY, _rotateStart);
+                                                                                                                                    _rotateEnd.copy(_rotateStart)
+
+                                                                                                                                  } else if (_state === STATE.ZOOM && !_this.noZoom) {
+
+                                                                                                                                    _this.getMouseOnScreen(event.pageX, event.pageY, _zoomStart);
+                                                                                                                                    _zoomEnd.copy(_zoomStart);
+
+                                                                                                                                  } else if (_state === STATE.PAN && !_this.noPan) {
+
+                                                                                                                                    _this.getMouseOnScreen(event.pageX, event.pageY, _panStart);
+                                                                                                                                    _panEnd.copy(_panStart)
+
+                                                                                                                                  }
+
+                                                                                                                                  document.addEventListener('mousemove', mousemove, false);
+                                                                                                                                  document.addEventListener('mouseup', mouseup, false);
+                                                                                                                                  _this.dispatchEvent(startEvent);
+
 
                                                                                                                                 }
 
-                                                                                                                              }
+                                                                                                                                function mousemove(event) {
 
-                                                                                                                            };
+                                                                                                                                  if (_this.enabled === false) return;
 
-                                                                                                                            this.update = function() {
+                                                                                                                                  event.preventDefault();
+                                                                                                                                  event.stopPropagation();
 
-                                                                                                                              _eye.subVectors(_this.object.position, _this.target);
+                                                                                                                                  if (_state === STATE.ROTATE && !_this.noRotate) {
 
-                                                                                                                              if (!_this.noRotate) {
+                                                                                                                                    _this.getMouseProjectionOnBall(event.pageX, event.pageY, _rotateEnd);
 
-                                                                                                                                _this.rotateCamera();
+                                                                                                                                  } else if (_state === STATE.ZOOM && !_this.noZoom) {
 
-                                                                                                                              }
+                                                                                                                                    _this.getMouseOnScreen(event.pageX, event.pageY, _zoomEnd);
 
-                                                                                                                              if (!_this.noZoom) {
+                                                                                                                                  } else if (_state === STATE.PAN && !_this.noPan) {
 
-                                                                                                                                _this.zoomCamera();
+                                                                                                                                    _this.getMouseOnScreen(event.pageX, event.pageY, _panEnd);
 
-                                                                                                                              }
+                                                                                                                                  }
 
-                                                                                                                              if (!_this.noPan) {
+                                                                                                                                }
 
-                                                                                                                                _this.panCamera();
+                                                                                                                                function mouseup(event) {
 
-                                                                                                                              }
+                                                                                                                                  if (_this.enabled === false) return;
 
-                                                                                                                              _this.object.position.addVectors(_this.target, _eye);
+                                                                                                                                  event.preventDefault();
+                                                                                                                                  event.stopPropagation();
 
-                                                                                                                              _this.checkDistances();
-
-                                                                                                                              _this.object.lookAt(_this.target);
-
-                                                                                                                              if (lastPosition.distanceToSquared(_this.object.position) > EPS) {
-
-                                                                                                                                _this.dispatchEvent(changeEvent);
-
-                                                                                                                                lastPosition.copy(_this.object.position);
-
-                                                                                                                              }
-
-                                                                                                                            };
-
-                                                                                                                            this.reset = function() {
-
-                                                                                                                              _state = STATE.NONE;
-                                                                                                                              _prevState = STATE.NONE;
-
-                                                                                                                              _this.target.copy(_this.target0);
-                                                                                                                              _this.object.position.copy(_this.position0);
-                                                                                                                              _this.object.up.copy(_this.up0);
-
-                                                                                                                              _eye.subVectors(_this.object.position, _this.target);
-
-                                                                                                                              _this.object.lookAt(_this.target);
-
-                                                                                                                              _this.dispatchEvent(changeEvent);
-
-                                                                                                                              lastPosition.copy(_this.object.position);
-
-                                                                                                                            };
-
-                                                                                                                            // listeners
-
-                                                                                                                            function keydown(event) {
-
-                                                                                                                              if (_this.enabled === false) return;
-
-                                                                                                                              window.removeEventListener('keydown', keydown);
-
-                                                                                                                              _prevState = _state;
-
-                                                                                                                              if (_state !== STATE.NONE) {
-
-                                                                                                                                return;
-
-                                                                                                                              } else if (event.keyCode === _this.keys[STATE.ROTATE] && !_this.noRotate) {
-
-                                                                                                                                _state = STATE.ROTATE;
-
-                                                                                                                              } else if (event.keyCode === _this.keys[STATE.ZOOM] && !_this.noZoom) {
-
-                                                                                                                                _state = STATE.ZOOM;
-
-                                                                                                                              } else if (event.keyCode === _this.keys[STATE.PAN] && !_this.noPan) {
-
-                                                                                                                                _state = STATE.PAN;
-
-                                                                                                                              }
-
-                                                                                                                            }
-
-                                                                                                                            function keyup(event) {
-
-                                                                                                                              if (_this.enabled === false) return;
-
-                                                                                                                              _state = _prevState;
-
-                                                                                                                              window.addEventListener('keydown', keydown, false);
-
-                                                                                                                            }
-
-                                                                                                                            function mousedown(event) {
-
-                                                                                                                              if (_this.enabled === false) return;
-
-                                                                                                                              event.preventDefault();
-                                                                                                                              event.stopPropagation();
-
-                                                                                                                              if (_state === STATE.NONE) {
-
-                                                                                                                                _state = event.button;
-
-                                                                                                                              }
-
-                                                                                                                              if (_state === STATE.ROTATE && !_this.noRotate) {
-
-                                                                                                                                _this.getMouseProjectionOnBall(event.pageX, event.pageY, _rotateStart);
-                                                                                                                                _rotateEnd.copy(_rotateStart)
-
-                                                                                                                              } else if (_state === STATE.ZOOM && !_this.noZoom) {
-
-                                                                                                                                _this.getMouseOnScreen(event.pageX, event.pageY, _zoomStart);
-                                                                                                                                _zoomEnd.copy(_zoomStart);
-
-                                                                                                                              } else if (_state === STATE.PAN && !_this.noPan) {
-
-                                                                                                                                _this.getMouseOnScreen(event.pageX, event.pageY, _panStart);
-                                                                                                                                _panEnd.copy(_panStart)
-
-                                                                                                                              }
-
-                                                                                                                              document.addEventListener('mousemove', mousemove, false);
-                                                                                                                              document.addEventListener('mouseup', mouseup, false);
-                                                                                                                              _this.dispatchEvent(startEvent);
-
-
-                                                                                                                            }
-
-                                                                                                                            function mousemove(event) {
-
-                                                                                                                              if (_this.enabled === false) return;
-
-                                                                                                                              event.preventDefault();
-                                                                                                                              event.stopPropagation();
-
-                                                                                                                              if (_state === STATE.ROTATE && !_this.noRotate) {
-
-                                                                                                                                _this.getMouseProjectionOnBall(event.pageX, event.pageY, _rotateEnd);
-
-                                                                                                                              } else if (_state === STATE.ZOOM && !_this.noZoom) {
-
-                                                                                                                                _this.getMouseOnScreen(event.pageX, event.pageY, _zoomEnd);
-
-                                                                                                                              } else if (_state === STATE.PAN && !_this.noPan) {
-
-                                                                                                                                _this.getMouseOnScreen(event.pageX, event.pageY, _panEnd);
-
-                                                                                                                              }
-
-                                                                                                                            }
-
-                                                                                                                            function mouseup(event) {
-
-                                                                                                                              if (_this.enabled === false) return;
-
-                                                                                                                              event.preventDefault();
-                                                                                                                              event.stopPropagation();
-
-                                                                                                                              _state = STATE.NONE;
-
-                                                                                                                              document.removeEventListener('mousemove', mousemove);
-                                                                                                                              document.removeEventListener('mouseup', mouseup);
-                                                                                                                              _this.dispatchEvent(endEvent);
-
-                                                                                                                            }
-
-                                                                                                                            function mousewheel(event) {
-
-                                                                                                                              if (_this.enabled === false) return;
-
-                                                                                                                              event.preventDefault();
-                                                                                                                              event.stopPropagation();
-
-                                                                                                                              var delta = 0;
-
-                                                                                                                              if (event.wheelDelta) { // WebKit / Opera / Explorer 9
-
-                                                                                                                                delta = event.wheelDelta / 40;
-
-                                                                                                                              } else if (event.detail) { // Firefox
-
-                                                                                                                                delta = -event.detail / 3;
-
-                                                                                                                              }
-
-                                                                                                                              _zoomStart.y += delta * 0.01;
-                                                                                                                              _this.dispatchEvent(startEvent);
-                                                                                                                              _this.dispatchEvent(endEvent);
-
-                                                                                                                            }
-
-                                                                                                                            function touchstart(event) {
-
-                                                                                                                              if (_this.enabled === false) return;
-
-                                                                                                                              switch (event.touches.length) {
-
-                                                                                                                                case 1:
-                                                                                                                                  _state = STATE.TOUCH_ROTATE;
-                                                                                                                                  _rotateEnd.copy(_this.getMouseProjectionOnBall(event.touches[0].pageX, event.touches[0].pageY, _rotateStart));
-                                                                                                                                  break;
-
-                                                                                                                                case 2:
-                                                                                                                                  _state = STATE.TOUCH_ZOOM;
-                                                                                                                                  var dx = event.touches[0].pageX - event.touches[1].pageX;
-                                                                                                                                  var dy = event.touches[0].pageY - event.touches[1].pageY;
-                                                                                                                                  _touchZoomDistanceEnd = _touchZoomDistanceStart = Math.sqrt(dx * dx + dy * dy);
-                                                                                                                                  break;
-
-                                                                                                                                case 3:
-                                                                                                                                  _state = STATE.TOUCH_PAN;
-                                                                                                                                  _panEnd.copy(_this.getMouseOnScreen(event.touches[0].pageX, event.touches[0].pageY, _panStart));
-                                                                                                                                  break;
-
-                                                                                                                                default:
                                                                                                                                   _state = STATE.NONE;
 
-                                                                                                                              }
-                                                                                                                              _this.dispatchEvent(startEvent);
+                                                                                                                                  document.removeEventListener('mousemove', mousemove);
+                                                                                                                                  document.removeEventListener('mouseup', mouseup);
+                                                                                                                                  _this.dispatchEvent(endEvent);
+
+                                                                                                                                }
+
+                                                                                                                                function mousewheel(event) {
+
+                                                                                                                                  if (_this.enabled === false) return;
+
+                                                                                                                                  event.preventDefault();
+                                                                                                                                  event.stopPropagation();
+
+                                                                                                                                  var delta = 0;
+
+                                                                                                                                  if (event.wheelDelta) { // WebKit / Opera / Explorer 9
+
+                                                                                                                                    delta = event.wheelDelta / 40;
+
+                                                                                                                                  } else if (event.detail) { // Firefox
+
+                                                                                                                                    delta = -event.detail / 3;
+
+                                                                                                                                  }
+
+                                                                                                                                  _zoomStart.y += delta * 0.01;
+                                                                                                                                  _this.dispatchEvent(startEvent);
+                                                                                                                                  _this.dispatchEvent(endEvent);
+
+                                                                                                                                }
+
+                                                                                                                                function touchstart(event) {
+
+                                                                                                                                  if (_this.enabled === false) return;
+
+                                                                                                                                  switch (event.touches.length) {
+
+                                                                                                                                    case 1:
+                                                                                                                                      _state = STATE.TOUCH_ROTATE;
+                                                                                                                                      _rotateEnd.copy(_this.getMouseProjectionOnBall(event.touches[0].pageX, event.touches[0].pageY, _rotateStart));
+                                                                                                                                      break;
+
+                                                                                                                                    case 2:
+                                                                                                                                      _state = STATE.TOUCH_ZOOM;
+                                                                                                                                      var dx = event.touches[0].pageX - event.touches[1].pageX;
+                                                                                                                                      var dy = event.touches[0].pageY - event.touches[1].pageY;
+                                                                                                                                      _touchZoomDistanceEnd = _touchZoomDistanceStart = Math.sqrt(dx * dx + dy * dy);
+                                                                                                                                      break;
+
+                                                                                                                                    case 3:
+                                                                                                                                      _state = STATE.TOUCH_PAN;
+                                                                                                                                      _panEnd.copy(_this.getMouseOnScreen(event.touches[0].pageX, event.touches[0].pageY, _panStart));
+                                                                                                                                      break;
+
+                                                                                                                                    default:
+                                                                                                                                      _state = STATE.NONE;
+
+                                                                                                                                  }
+                                                                                                                                  _this.dispatchEvent(startEvent);
 
 
-                                                                                                                            }
+                                                                                                                                }
 
-                                                                                                                            function touchmove(event) {
+                                                                                                                                function touchmove(event) {
 
-                                                                                                                              if (_this.enabled === false) return;
+                                                                                                                                  if (_this.enabled === false) return;
 
-                                                                                                                              event.preventDefault();
-                                                                                                                              event.stopPropagation();
+                                                                                                                                  event.preventDefault();
+                                                                                                                                  event.stopPropagation();
 
-                                                                                                                              switch (event.touches.length) {
+                                                                                                                                  switch (event.touches.length) {
 
-                                                                                                                                case 1:
-                                                                                                                                  _this.getMouseProjectionOnBall(event.touches[0].pageX, event.touches[0].pageY, _rotateEnd);
-                                                                                                                                  break;
+                                                                                                                                    case 1:
+                                                                                                                                      _this.getMouseProjectionOnBall(event.touches[0].pageX, event.touches[0].pageY, _rotateEnd);
+                                                                                                                                      break;
 
-                                                                                                                                case 2:
-                                                                                                                                  var dx = event.touches[0].pageX - event.touches[1].pageX;
-                                                                                                                                  var dy = event.touches[0].pageY - event.touches[1].pageY;
-                                                                                                                                  _touchZoomDistanceEnd = Math.sqrt(dx * dx + dy * dy)
-                                                                                                                                  break;
+                                                                                                                                    case 2:
+                                                                                                                                      var dx = event.touches[0].pageX - event.touches[1].pageX;
+                                                                                                                                      var dy = event.touches[0].pageY - event.touches[1].pageY;
+                                                                                                                                      _touchZoomDistanceEnd = Math.sqrt(dx * dx + dy * dy)
+                                                                                                                                      break;
 
-                                                                                                                                case 3:
-                                                                                                                                  _this.getMouseOnScreen(event.touches[0].pageX, event.touches[0].pageY, _panEnd);
-                                                                                                                                  break;
+                                                                                                                                    case 3:
+                                                                                                                                      _this.getMouseOnScreen(event.touches[0].pageX, event.touches[0].pageY, _panEnd);
+                                                                                                                                      break;
 
-                                                                                                                                default:
+                                                                                                                                    default:
+                                                                                                                                      _state = STATE.NONE;
+
+                                                                                                                                  }
+
+                                                                                                                                }
+
+                                                                                                                                function touchend(event) {
+
+                                                                                                                                  if (_this.enabled === false) return;
+
+                                                                                                                                  switch (event.touches.length) {
+
+                                                                                                                                    case 1:
+                                                                                                                                      _rotateStart.copy(_this.getMouseProjectionOnBall(event.touches[0].pageX, event.touches[0].pageY, _rotateEnd));
+                                                                                                                                      break;
+
+                                                                                                                                    case 2:
+                                                                                                                                      _touchZoomDistanceStart = _touchZoomDistanceEnd = 0;
+                                                                                                                                      break;
+
+                                                                                                                                    case 3:
+                                                                                                                                      _panStart.copy(_this.getMouseOnScreen(event.touches[0].pageX, event.touches[0].pageY, _panEnd));
+                                                                                                                                      break;
+
+                                                                                                                                  }
+
                                                                                                                                   _state = STATE.NONE;
+                                                                                                                                  _this.dispatchEvent(endEvent);
 
-                                                                                                                              }
+                                                                                                                                }
 
-                                                                                                                            }
+                                                                                                                                this.domElement.addEventListener('contextmenu', function(event) {
+                                                                                                                                  event.preventDefault();
+                                                                                                                                }, false);
 
-                                                                                                                            function touchend(event) {
+                                                                                                                                this.domElement.addEventListener('mousedown', mousedown, false);
 
-                                                                                                                              if (_this.enabled === false) return;
+                                                                                                                                this.domElement.addEventListener('mousewheel', mousewheel, false);
+                                                                                                                                this.domElement.addEventListener('DOMMouseScroll', mousewheel, false); // firefox
 
-                                                                                                                              switch (event.touches.length) {
+                                                                                                                                this.domElement.addEventListener('touchstart', touchstart, false);
+                                                                                                                                this.domElement.addEventListener('touchend', touchend, false);
+                                                                                                                                this.domElement.addEventListener('touchmove', touchmove, false);
 
-                                                                                                                                case 1:
-                                                                                                                                  _rotateStart.copy(_this.getMouseProjectionOnBall(event.touches[0].pageX, event.touches[0].pageY, _rotateEnd));
-                                                                                                                                  break;
+                                                                                                                                window.addEventListener('keydown', keydown, false);
+                                                                                                                                window.addEventListener('keyup', keyup, false);
 
-                                                                                                                                case 2:
-                                                                                                                                  _touchZoomDistanceStart = _touchZoomDistanceEnd = 0;
-                                                                                                                                  break;
+                                                                                                                                this.handleResize();
 
-                                                                                                                                case 3:
-                                                                                                                                  _panStart.copy(_this.getMouseOnScreen(event.touches[0].pageX, event.touches[0].pageY, _panEnd));
-                                                                                                                                  break;
+                                                                                                                                // force an update at start
+                                                                                                                                this.update();
 
-                                                                                                                              }
+                                                                                                                                };
 
-                                                                                                                              _state = STATE.NONE;
-                                                                                                                              _this.dispatchEvent(endEvent);
+                                                                                                                                THREE.TrackballControls.prototype = Object.create(THREE.EventDispatcher.prototype);
 
-                                                                                                                            }
-
-                                                                                                                            this.domElement.addEventListener('contextmenu', function(event) {
-                                                                                                                              event.preventDefault();
-                                                                                                                            }, false);
-
-                                                                                                                            this.domElement.addEventListener('mousedown', mousedown, false);
-
-                                                                                                                            this.domElement.addEventListener('mousewheel', mousewheel, false);
-                                                                                                                            this.domElement.addEventListener('DOMMouseScroll', mousewheel, false); // firefox
-
-                                                                                                                            this.domElement.addEventListener('touchstart', touchstart, false);
-                                                                                                                            this.domElement.addEventListener('touchend', touchend, false);
-                                                                                                                            this.domElement.addEventListener('touchmove', touchmove, false);
-
-                                                                                                                            window.addEventListener('keydown', keydown, false);
-                                                                                                                            window.addEventListener('keyup', keyup, false);
-
-                                                                                                                            this.handleResize();
-
-                                                                                                                            // force an update at start
-                                                                                                                            this.update();
-
-                                                                                                                            };
-
-                                                                                                                            THREE.TrackballControls.prototype = Object.create(THREE.EventDispatcher.prototype);
-
-                                                                                                                            /**
-                                                                                                                             * Based on http://www.emagix.net/academic/mscs-project/item/camera-sync-with-css3-and-webgl-threejs
-                                                                                                                             * @author mrdoob / http://mrdoob.com/
-                                                                                                                             */
+                                                                                                                                /**
+                                                                                                                                 * Based on http://www.emagix.net/academic/mscs-project/item/camera-sync-with-css3-and-webgl-threejs
+                                                                                                                                 * @author mrdoob / http://mrdoob.com/
+                                                                                                                                 */
 
               THREE.CSS3DObject = function(element) {
 

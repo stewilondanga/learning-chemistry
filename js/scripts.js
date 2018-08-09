@@ -183,10 +183,10 @@ TWEEN.Easing = {
       In: function(a) {
         return 1 - Math.cos(a * Math.PI / 2)
       },
-      /*                                                          Out: function(a) {
-                                                                    return Math.sin(a * Math.PI / 2)
-                                                                },
-                                                                InOut: function(a) {
+      Out: function(a) {
+        return Math.sin(a * Math.PI / 2)
+      },
+      /*                                                          InOut: function(a) {
                                                                     return 0.5 * (1 - Math.cos(Math.PI * a))
                                                                 }
                                                             },

@@ -531,9 +531,9 @@ THREE.TrackballControls = function(object, domElement) {
                 _eye.applyQuaternion(quaternion);
                 _this.object.up.applyQuaternion(quaternion);
 
-                /*                                                                            _rotateEnd.applyQuaternion(quaternion);
+                _rotateEnd.applyQuaternion(quaternion);
 
-                                                                                            if (_this.staticMoving) {
+                /*                                                                            if (_this.staticMoving) {
 
                                                                                               _rotateStart.copy(_rotateEnd);
 

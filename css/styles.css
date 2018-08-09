@@ -104,11 +104,10 @@ button:hover {
   background-color: rgba(0, 255, 255, 0.5);
 }
 
-/*button:active {
-	color: #000000;
-	background-color: rgba(0,255,255,0.75);
+button:active {
+  color: #000000;
+  background-color: rgba(0, 255, 255, 0.75);
 }
-
 
 /*
 .containers {

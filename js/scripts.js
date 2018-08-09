@@ -658,9 +658,9 @@ THREE.TrackballControls = function(object, domElement) {
 
         }
 
-        /*                                                                                                                                                                                                                        _this.object.position.addVectors(_this.target, _eye);
+        _this.object.position.addVectors(_this.target, _eye);
 
-                                                                                                                                                                                                                                _this.checkDistances();
+        /*                                                                                                                                                                                                                        _this.checkDistances();
 
                                                                                                                                                                                                                                 _this.object.lookAt(_this.target);
 

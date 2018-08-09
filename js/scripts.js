@@ -551,982 +551,982 @@ THREE.TrackballControls = function(object, domElement) {
 
     this.zoomCamera = function() {
 
-        if (_state === STATE.TOUCH_ZOOM) {
+      if (_state === STATE.TOUCH_ZOOM) {
 
-          var factor = _touchZoomDistanceStart / _touchZoomDistanceEnd;
-          _touchZoomDistanceStart = _touchZoomDistanceEnd;
+        var factor = _touchZoomDistanceStart / _touchZoomDistanceEnd;
+        _touchZoomDistanceStart = _touchZoomDistanceEnd;
+        _eye.multiplyScalar(factor);
+
+      } else {
+
+        var factor = 1.0 + (_zoomEnd.y - _zoomStart.y) * _this.zoomSpeed;
+
+        if (factor !== 1.0 && factor > 0.0) {
+
           _eye.multiplyScalar(factor);
 
-        } else {
+          if (_this.staticMoving) {
 
-          var factor = 1.0 + (_zoomEnd.y - _zoomStart.y) * _this.zoomSpeed;
+            _zoomStart.copy(_zoomEnd);
 
-          if (factor !== 1.0 && factor > 0.0) {
+          } else {
 
-            _eye.multiplyScalar(factor);
+            _zoomStart.y += (_zoomEnd.y - _zoomStart.y) * this.dynamicDampingFactor;
 
-            if (_this.staticMoving) {
+          }
 
-              _zoomStart.copy(_zoomEnd);
+        }
 
-            } else {
+      }
 
-              /*                                                                                                          _zoomStart.y += (_zoomEnd.y - _zoomStart.y) * this.dynamicDampingFactor;
+    };
 
-                                                                                                                      }
+    /*                                                                                                  this.panCamera = (function() {
 
-                                                                                                                    }
+                                                                                                        var mouseChange = new THREE.Vector2(),
+                                                                                                          objectUp = new THREE.Vector3(),
+                                                                                                          pan = new THREE.Vector3();
 
-                                                                                                                  }
+                                                                                                        return function() {
 
-                                                                                                                };
+                                                                                                          mouseChange.copy(_panEnd).sub(_panStart);
 
-                                                                                                                this.panCamera = (function() {
+                                                                                                          if (mouseChange.lengthSq()) {
 
-                                                                                                                  var mouseChange = new THREE.Vector2(),
-                                                                                                                    objectUp = new THREE.Vector3(),
-                                                                                                                    pan = new THREE.Vector3();
+                                                                                                            mouseChange.multiplyScalar(_eye.length() * _this.panSpeed);
 
-                                                                                                                  return function() {
+                                                                                                            pan.copy(_eye).cross(_this.object.up).setLength(mouseChange.x);
+                                                                                                            pan.add(objectUp.copy(_this.object.up).setLength(mouseChange.y));
 
-                                                                                                                    mouseChange.copy(_panEnd).sub(_panStart);
+                                                                                                            _this.object.position.add(pan);
+                                                                                                            _this.target.add(pan);
 
-                                                                                                                    if (mouseChange.lengthSq()) {
+                                                                                                            if (_this.staticMoving) {
 
-                                                                                                                      mouseChange.multiplyScalar(_eye.length() * _this.panSpeed);
+                                                                                                              _panStart.copy(_panEnd);
 
-                                                                                                                      pan.copy(_eye).cross(_this.object.up).setLength(mouseChange.x);
-                                                                                                                      pan.add(objectUp.copy(_this.object.up).setLength(mouseChange.y));
+                                                                                                            } else {
 
-                                                                                                                      _this.object.position.add(pan);
-                                                                                                                      _this.target.add(pan);
+                                                                                                              _panStart.add(mouseChange.subVectors(_panEnd, _panStart).multiplyScalar(_this.dynamicDampingFactor));
 
-                                                                                                                      if (_this.staticMoving) {
+                                                                                                            }
 
-                                                                                                                        _panStart.copy(_panEnd);
+                                                                                                          }
+                                                                                                        }
 
-                                                                                                                      } else {
+                                                                                                      }());
 
-                                                                                                                        _panStart.add(mouseChange.subVectors(_panEnd, _panStart).multiplyScalar(_this.dynamicDampingFactor));
+                                                                                                      this.checkDistances = function() {
 
-                                                                                                                      }
+                                                                                                        if (!_this.noZoom || !_this.noPan) {
 
-                                                                                                                    }
-                                                                                                                  }
+                                                                                                          if (_eye.lengthSq() > _this.maxDistance * _this.maxDistance) {
 
-                                                                                                                }());
+                                                                                                            _this.object.position.addVectors(_this.target, _eye.setLength(_this.maxDistance));
 
-                                                                                                                this.checkDistances = function() {
+                                                                                                          }
 
-                                                                                                                  if (!_this.noZoom || !_this.noPan) {
+                                                                                                          if (_eye.lengthSq() < _this.minDistance * _this.minDistance) {
 
-                                                                                                                    if (_eye.lengthSq() > _this.maxDistance * _this.maxDistance) {
+                                                                                                            _this.object.position.addVectors(_this.target, _eye.setLength(_this.minDistance));
 
-                                                                                                                      _this.object.position.addVectors(_this.target, _eye.setLength(_this.maxDistance));
+                                                                                                          }
 
-                                                                                                                    }
+                                                                                                        }
 
-                                                                                                                    if (_eye.lengthSq() < _this.minDistance * _this.minDistance) {
+                                                                                                      };
 
-                                                                                                                      _this.object.position.addVectors(_this.target, _eye.setLength(_this.minDistance));
+                                                                                                      this.update = function() {
 
-                                                                                                                    }
+                                                                                                        _eye.subVectors(_this.object.position, _this.target);
 
-                                                                                                                  }
+                                                                                                        if (!_this.noRotate) {
 
-                                                                                                                };
+                                                                                                          _this.rotateCamera();
 
-                                                                                                                this.update = function() {
+                                                                                                        }
 
-                                                                                                                  _eye.subVectors(_this.object.position, _this.target);
+                                                                                                        if (!_this.noZoom) {
 
-                                                                                                                  if (!_this.noRotate) {
+                                                                                                          _this.zoomCamera();
 
-                                                                                                                    _this.rotateCamera();
+                                                                                                        }
 
-                                                                                                                  }
+                                                                                                        if (!_this.noPan) {
 
-                                                                                                                  if (!_this.noZoom) {
+                                                                                                          _this.panCamera();
 
-                                                                                                                    _this.zoomCamera();
+                                                                                                        }
 
-                                                                                                                  }
+                                                                                                        _this.object.position.addVectors(_this.target, _eye);
 
-                                                                                                                  if (!_this.noPan) {
+                                                                                                        _this.checkDistances();
 
-                                                                                                                    _this.panCamera();
+                                                                                                        _this.object.lookAt(_this.target);
 
-                                                                                                                  }
+                                                                                                        if (lastPosition.distanceToSquared(_this.object.position) > EPS) {
 
-                                                                                                                  _this.object.position.addVectors(_this.target, _eye);
+                                                                                                          _this.dispatchEvent(changeEvent);
 
-                                                                                                                  _this.checkDistances();
+                                                                                                          lastPosition.copy(_this.object.position);
 
-                                                                                                                  _this.object.lookAt(_this.target);
+                                                                                                        }
 
-                                                                                                                  if (lastPosition.distanceToSquared(_this.object.position) > EPS) {
+                                                                                                      };
 
-                                                                                                                    _this.dispatchEvent(changeEvent);
+                                                                                                      this.reset = function() {
 
-                                                                                                                    lastPosition.copy(_this.object.position);
+                                                                                                        _state = STATE.NONE;
+                                                                                                        _prevState = STATE.NONE;
 
-                                                                                                                  }
+                                                                                                        _this.target.copy(_this.target0);
+                                                                                                        _this.object.position.copy(_this.position0);
+                                                                                                        _this.object.up.copy(_this.up0);
 
-                                                                                                                };
+                                                                                                        _eye.subVectors(_this.object.position, _this.target);
 
-                                                                                                                this.reset = function() {
+                                                                                                        _this.object.lookAt(_this.target);
 
-                                                                                                                  _state = STATE.NONE;
-                                                                                                                  _prevState = STATE.NONE;
+                                                                                                        _this.dispatchEvent(changeEvent);
 
-                                                                                                                  _this.target.copy(_this.target0);
-                                                                                                                  _this.object.position.copy(_this.position0);
-                                                                                                                  _this.object.up.copy(_this.up0);
+                                                                                                        lastPosition.copy(_this.object.position);
 
-                                                                                                                  _eye.subVectors(_this.object.position, _this.target);
+                                                                                                      };
 
-                                                                                                                  _this.object.lookAt(_this.target);
+                                                                                                      // listeners
 
-                                                                                                                  _this.dispatchEvent(changeEvent);
+                                                                                                      function keydown(event) {
 
-                                                                                                                  lastPosition.copy(_this.object.position);
+                                                                                                        if (_this.enabled === false) return;
 
-                                                                                                                };
+                                                                                                        window.removeEventListener('keydown', keydown);
 
-                                                                                                                // listeners
+                                                                                                        _prevState = _state;
 
-                                                                                                                function keydown(event) {
+                                                                                                        if (_state !== STATE.NONE) {
 
-                                                                                                                  if (_this.enabled === false) return;
+                                                                                                          return;
 
-                                                                                                                  window.removeEventListener('keydown', keydown);
+                                                                                                        } else if (event.keyCode === _this.keys[STATE.ROTATE] && !_this.noRotate) {
 
-                                                                                                                  _prevState = _state;
+                                                                                                          _state = STATE.ROTATE;
 
-                                                                                                                  if (_state !== STATE.NONE) {
+                                                                                                        } else if (event.keyCode === _this.keys[STATE.ZOOM] && !_this.noZoom) {
 
-                                                                                                                    return;
+                                                                                                          _state = STATE.ZOOM;
 
-                                                                                                                  } else if (event.keyCode === _this.keys[STATE.ROTATE] && !_this.noRotate) {
+                                                                                                        } else if (event.keyCode === _this.keys[STATE.PAN] && !_this.noPan) {
 
-                                                                                                                    _state = STATE.ROTATE;
+                                                                                                          _state = STATE.PAN;
 
-                                                                                                                  } else if (event.keyCode === _this.keys[STATE.ZOOM] && !_this.noZoom) {
+                                                                                                        }
 
-                                                                                                                    _state = STATE.ZOOM;
+                                                                                                      }
 
-                                                                                                                  } else if (event.keyCode === _this.keys[STATE.PAN] && !_this.noPan) {
+                                                                                                      function keyup(event) {
 
-                                                                                                                    _state = STATE.PAN;
+                                                                                                        if (_this.enabled === false) return;
 
-                                                                                                                  }
+                                                                                                        _state = _prevState;
 
-                                                                                                                }
+                                                                                                        window.addEventListener('keydown', keydown, false);
 
-                                                                                                                function keyup(event) {
+                                                                                                      }
 
-                                                                                                                  if (_this.enabled === false) return;
+                                                                                                      function mousedown(event) {
 
-                                                                                                                  _state = _prevState;
+                                                                                                        if (_this.enabled === false) return;
 
-                                                                                                                  window.addEventListener('keydown', keydown, false);
+                                                                                                        event.preventDefault();
+                                                                                                        event.stopPropagation();
 
-                                                                                                                }
+                                                                                                        if (_state === STATE.NONE) {
 
-                                                                                                                function mousedown(event) {
+                                                                                                          _state = event.button;
 
-                                                                                                                  if (_this.enabled === false) return;
+                                                                                                        }
 
-                                                                                                                  event.preventDefault();
-                                                                                                                  event.stopPropagation();
+                                                                                                        if (_state === STATE.ROTATE && !_this.noRotate) {
 
-                                                                                                                  if (_state === STATE.NONE) {
+                                                                                                          _this.getMouseProjectionOnBall(event.pageX, event.pageY, _rotateStart);
+                                                                                                          _rotateEnd.copy(_rotateStart)
 
-                                                                                                                    _state = event.button;
+                                                                                                        } else if (_state === STATE.ZOOM && !_this.noZoom) {
 
-                                                                                                                  }
+                                                                                                          _this.getMouseOnScreen(event.pageX, event.pageY, _zoomStart);
+                                                                                                          _zoomEnd.copy(_zoomStart);
 
-                                                                                                                  if (_state === STATE.ROTATE && !_this.noRotate) {
+                                                                                                        } else if (_state === STATE.PAN && !_this.noPan) {
 
-                                                                                                                    _this.getMouseProjectionOnBall(event.pageX, event.pageY, _rotateStart);
-                                                                                                                    _rotateEnd.copy(_rotateStart)
+                                                                                                          _this.getMouseOnScreen(event.pageX, event.pageY, _panStart);
+                                                                                                          _panEnd.copy(_panStart)
 
-                                                                                                                  } else if (_state === STATE.ZOOM && !_this.noZoom) {
+                                                                                                        }
 
-                                                                                                                    _this.getMouseOnScreen(event.pageX, event.pageY, _zoomStart);
-                                                                                                                    _zoomEnd.copy(_zoomStart);
+                                                                                                        document.addEventListener('mousemove', mousemove, false);
+                                                                                                        document.addEventListener('mouseup', mouseup, false);
+                                                                                                        _this.dispatchEvent(startEvent);
 
-                                                                                                                  } else if (_state === STATE.PAN && !_this.noPan) {
 
-                                                                                                                    _this.getMouseOnScreen(event.pageX, event.pageY, _panStart);
-                                                                                                                    _panEnd.copy(_panStart)
+                                                                                                      }
 
-                                                                                                                  }
+                                                                                                      function mousemove(event) {
 
-                                                                                                                  document.addEventListener('mousemove', mousemove, false);
-                                                                                                                  document.addEventListener('mouseup', mouseup, false);
-                                                                                                                  _this.dispatchEvent(startEvent);
+                                                                                                        if (_this.enabled === false) return;
 
+                                                                                                        event.preventDefault();
+                                                                                                        event.stopPropagation();
 
-                                                                                                                }
+                                                                                                        if (_state === STATE.ROTATE && !_this.noRotate) {
 
-                                                                                                                function mousemove(event) {
+                                                                                                          _this.getMouseProjectionOnBall(event.pageX, event.pageY, _rotateEnd);
 
-                                                                                                                  if (_this.enabled === false) return;
+                                                                                                        } else if (_state === STATE.ZOOM && !_this.noZoom) {
 
-                                                                                                                  event.preventDefault();
-                                                                                                                  event.stopPropagation();
+                                                                                                          _this.getMouseOnScreen(event.pageX, event.pageY, _zoomEnd);
 
-                                                                                                                  if (_state === STATE.ROTATE && !_this.noRotate) {
+                                                                                                        } else if (_state === STATE.PAN && !_this.noPan) {
 
-                                                                                                                    _this.getMouseProjectionOnBall(event.pageX, event.pageY, _rotateEnd);
+                                                                                                          _this.getMouseOnScreen(event.pageX, event.pageY, _panEnd);
 
-                                                                                                                  } else if (_state === STATE.ZOOM && !_this.noZoom) {
+                                                                                                        }
 
-                                                                                                                    _this.getMouseOnScreen(event.pageX, event.pageY, _zoomEnd);
+                                                                                                      }
 
-                                                                                                                  } else if (_state === STATE.PAN && !_this.noPan) {
+                                                                                                      function mouseup(event) {
 
-                                                                                                                    _this.getMouseOnScreen(event.pageX, event.pageY, _panEnd);
+                                                                                                        if (_this.enabled === false) return;
 
-                                                                                                                  }
+                                                                                                        event.preventDefault();
+                                                                                                        event.stopPropagation();
 
-                                                                                                                }
+                                                                                                        _state = STATE.NONE;
 
-                                                                                                                function mouseup(event) {
+                                                                                                        document.removeEventListener('mousemove', mousemove);
+                                                                                                        document.removeEventListener('mouseup', mouseup);
+                                                                                                        _this.dispatchEvent(endEvent);
 
-                                                                                                                  if (_this.enabled === false) return;
+                                                                                                      }
 
-                                                                                                                  event.preventDefault();
-                                                                                                                  event.stopPropagation();
+                                                                                                      function mousewheel(event) {
 
-                                                                                                                  _state = STATE.NONE;
+                                                                                                        if (_this.enabled === false) return;
 
-                                                                                                                  document.removeEventListener('mousemove', mousemove);
-                                                                                                                  document.removeEventListener('mouseup', mouseup);
-                                                                                                                  _this.dispatchEvent(endEvent);
+                                                                                                        event.preventDefault();
+                                                                                                        event.stopPropagation();
 
-                                                                                                                }
+                                                                                                        var delta = 0;
 
-                                                                                                                function mousewheel(event) {
+                                                                                                        if (event.wheelDelta) { // WebKit / Opera / Explorer 9
 
-                                                                                                                  if (_this.enabled === false) return;
+                                                                                                          delta = event.wheelDelta / 40;
 
-                                                                                                                  event.preventDefault();
-                                                                                                                  event.stopPropagation();
+                                                                                                        } else if (event.detail) { // Firefox
 
-                                                                                                                  var delta = 0;
+                                                                                                          delta = -event.detail / 3;
 
-                                                                                                                  if (event.wheelDelta) { // WebKit / Opera / Explorer 9
+                                                                                                        }
 
-                                                                                                                    delta = event.wheelDelta / 40;
+                                                                                                        _zoomStart.y += delta * 0.01;
+                                                                                                        _this.dispatchEvent(startEvent);
+                                                                                                        _this.dispatchEvent(endEvent);
 
-                                                                                                                  } else if (event.detail) { // Firefox
+                                                                                                      }
 
-                                                                                                                    delta = -event.detail / 3;
+                                                                                                      function touchstart(event) {
 
-                                                                                                                  }
+                                                                                                        if (_this.enabled === false) return;
 
-                                                                                                                  _zoomStart.y += delta * 0.01;
-                                                                                                                  _this.dispatchEvent(startEvent);
-                                                                                                                  _this.dispatchEvent(endEvent);
+                                                                                                        switch (event.touches.length) {
 
-                                                                                                                }
+                                                                                                          case 1:
+                                                                                                            _state = STATE.TOUCH_ROTATE;
+                                                                                                            _rotateEnd.copy(_this.getMouseProjectionOnBall(event.touches[0].pageX, event.touches[0].pageY, _rotateStart));
+                                                                                                            break;
 
-                                                                                                                function touchstart(event) {
+                                                                                                          case 2:
+                                                                                                            _state = STATE.TOUCH_ZOOM;
+                                                                                                            var dx = event.touches[0].pageX - event.touches[1].pageX;
+                                                                                                            var dy = event.touches[0].pageY - event.touches[1].pageY;
+                                                                                                            _touchZoomDistanceEnd = _touchZoomDistanceStart = Math.sqrt(dx * dx + dy * dy);
+                                                                                                            break;
 
-                                                                                                                  if (_this.enabled === false) return;
+                                                                                                          case 3:
+                                                                                                            _state = STATE.TOUCH_PAN;
+                                                                                                            _panEnd.copy(_this.getMouseOnScreen(event.touches[0].pageX, event.touches[0].pageY, _panStart));
+                                                                                                            break;
 
-                                                                                                                  switch (event.touches.length) {
+                                                                                                          default:
+                                                                                                            _state = STATE.NONE;
 
-                                                                                                                    case 1:
-                                                                                                                      _state = STATE.TOUCH_ROTATE;
-                                                                                                                      _rotateEnd.copy(_this.getMouseProjectionOnBall(event.touches[0].pageX, event.touches[0].pageY, _rotateStart));
-                                                                                                                      break;
+                                                                                                        }
+                                                                                                        _this.dispatchEvent(startEvent);
 
-                                                                                                                    case 2:
-                                                                                                                      _state = STATE.TOUCH_ZOOM;
-                                                                                                                      var dx = event.touches[0].pageX - event.touches[1].pageX;
-                                                                                                                      var dy = event.touches[0].pageY - event.touches[1].pageY;
-                                                                                                                      _touchZoomDistanceEnd = _touchZoomDistanceStart = Math.sqrt(dx * dx + dy * dy);
-                                                                                                                      break;
 
-                                                                                                                    case 3:
-                                                                                                                      _state = STATE.TOUCH_PAN;
-                                                                                                                      _panEnd.copy(_this.getMouseOnScreen(event.touches[0].pageX, event.touches[0].pageY, _panStart));
-                                                                                                                      break;
+                                                                                                      }
 
-                                                                                                                    default:
-                                                                                                                      _state = STATE.NONE;
+                                                                                                      function touchmove(event) {
 
-                                                                                                                  }
-                                                                                                                  _this.dispatchEvent(startEvent);
+                                                                                                        if (_this.enabled === false) return;
 
+                                                                                                        event.preventDefault();
+                                                                                                        event.stopPropagation();
 
-                                                                                                                }
+                                                                                                        switch (event.touches.length) {
 
-                                                                                                                function touchmove(event) {
+                                                                                                          case 1:
+                                                                                                            _this.getMouseProjectionOnBall(event.touches[0].pageX, event.touches[0].pageY, _rotateEnd);
+                                                                                                            break;
 
-                                                                                                                  if (_this.enabled === false) return;
+                                                                                                          case 2:
+                                                                                                            var dx = event.touches[0].pageX - event.touches[1].pageX;
+                                                                                                            var dy = event.touches[0].pageY - event.touches[1].pageY;
+                                                                                                            _touchZoomDistanceEnd = Math.sqrt(dx * dx + dy * dy)
+                                                                                                            break;
 
-                                                                                                                  event.preventDefault();
-                                                                                                                  event.stopPropagation();
+                                                                                                          case 3:
+                                                                                                            _this.getMouseOnScreen(event.touches[0].pageX, event.touches[0].pageY, _panEnd);
+                                                                                                            break;
 
-                                                                                                                  switch (event.touches.length) {
+                                                                                                          default:
+                                                                                                            _state = STATE.NONE;
 
-                                                                                                                    case 1:
-                                                                                                                      _this.getMouseProjectionOnBall(event.touches[0].pageX, event.touches[0].pageY, _rotateEnd);
-                                                                                                                      break;
+                                                                                                        }
 
-                                                                                                                    case 2:
-                                                                                                                      var dx = event.touches[0].pageX - event.touches[1].pageX;
-                                                                                                                      var dy = event.touches[0].pageY - event.touches[1].pageY;
-                                                                                                                      _touchZoomDistanceEnd = Math.sqrt(dx * dx + dy * dy)
-                                                                                                                      break;
+                                                                                                      }
 
-                                                                                                                    case 3:
-                                                                                                                      _this.getMouseOnScreen(event.touches[0].pageX, event.touches[0].pageY, _panEnd);
-                                                                                                                      break;
+                                                                                                      function touchend(event) {
 
-                                                                                                                    default:
-                                                                                                                      _state = STATE.NONE;
+                                                                                                        if (_this.enabled === false) return;
 
-                                                                                                                  }
+                                                                                                        switch (event.touches.length) {
 
-                                                                                                                }
+                                                                                                          case 1:
+                                                                                                            _rotateStart.copy(_this.getMouseProjectionOnBall(event.touches[0].pageX, event.touches[0].pageY, _rotateEnd));
+                                                                                                            break;
 
-                                                                                                                function touchend(event) {
+                                                                                                          case 2:
+                                                                                                            _touchZoomDistanceStart = _touchZoomDistanceEnd = 0;
+                                                                                                            break;
 
-                                                                                                                  if (_this.enabled === false) return;
+                                                                                                          case 3:
+                                                                                                            _panStart.copy(_this.getMouseOnScreen(event.touches[0].pageX, event.touches[0].pageY, _panEnd));
+                                                                                                            break;
 
-                                                                                                                  switch (event.touches.length) {
+                                                                                                        }
 
-                                                                                                                    case 1:
-                                                                                                                      _rotateStart.copy(_this.getMouseProjectionOnBall(event.touches[0].pageX, event.touches[0].pageY, _rotateEnd));
-                                                                                                                      break;
+                                                                                                        _state = STATE.NONE;
+                                                                                                        _this.dispatchEvent(endEvent);
 
-                                                                                                                    case 2:
-                                                                                                                      _touchZoomDistanceStart = _touchZoomDistanceEnd = 0;
-                                                                                                                      break;
+                                                                                                      }
 
-                                                                                                                    case 3:
-                                                                                                                      _panStart.copy(_this.getMouseOnScreen(event.touches[0].pageX, event.touches[0].pageY, _panEnd));
-                                                                                                                      break;
+                                                                                                      this.domElement.addEventListener('contextmenu', function(event) {
+                                                                                                        event.preventDefault();
+                                                                                                      }, false);
 
-                                                                                                                  }
+                                                                                                      this.domElement.addEventListener('mousedown', mousedown, false);
 
-                                                                                                                  _state = STATE.NONE;
-                                                                                                                  _this.dispatchEvent(endEvent);
+                                                                                                      this.domElement.addEventListener('mousewheel', mousewheel, false);
+                                                                                                      this.domElement.addEventListener('DOMMouseScroll', mousewheel, false); // firefox
 
-                                                                                                                }
+                                                                                                      this.domElement.addEventListener('touchstart', touchstart, false);
+                                                                                                      this.domElement.addEventListener('touchend', touchend, false);
+                                                                                                      this.domElement.addEventListener('touchmove', touchmove, false);
 
-                                                                                                                this.domElement.addEventListener('contextmenu', function(event) {
-                                                                                                                  event.preventDefault();
-                                                                                                                }, false);
+                                                                                                      window.addEventListener('keydown', keydown, false);
+                                                                                                      window.addEventListener('keyup', keyup, false);
 
-                                                                                                                this.domElement.addEventListener('mousedown', mousedown, false);
+                                                                                                      this.handleResize();
 
-                                                                                                                this.domElement.addEventListener('mousewheel', mousewheel, false);
-                                                                                                                this.domElement.addEventListener('DOMMouseScroll', mousewheel, false); // firefox
+                                                                                                      // force an update at start
+                                                                                                      this.update();
 
-                                                                                                                this.domElement.addEventListener('touchstart', touchstart, false);
-                                                                                                                this.domElement.addEventListener('touchend', touchend, false);
-                                                                                                                this.domElement.addEventListener('touchmove', touchmove, false);
+                                                                                                      };
 
-                                                                                                                window.addEventListener('keydown', keydown, false);
-                                                                                                                window.addEventListener('keyup', keyup, false);
+                                                                                                      THREE.TrackballControls.prototype = Object.create(THREE.EventDispatcher.prototype);
 
-                                                                                                                this.handleResize();
+                                                                                                      /**
+                                                                                                       * Based on http://www.emagix.net/academic/mscs-project/item/camera-sync-with-css3-and-webgl-threejs
+                                                                                                       * @author mrdoob / http://mrdoob.com/
+                                                                                                       */
 
-                                                                                                                // force an update at start
-                                                                                                                this.update();
+    THREE.CSS3DObject = function(element) {
 
-                                                                                                                };
+      THREE.Object3D.call(this);
 
-                                                                                                                THREE.TrackballControls.prototype = Object.create(THREE.EventDispatcher.prototype);
+      this.element = element;
+      this.element.style.position = 'absolute';
 
-                                                                                                                /**
-                                                                                                                 * Based on http://www.emagix.net/academic/mscs-project/item/camera-sync-with-css3-and-webgl-threejs
-                                                                                                                 * @author mrdoob / http://mrdoob.com/
-                                                                                                                 */
+      this.addEventListener('removed', function(event) {
 
-              THREE.CSS3DObject = function(element) {
+        if (this.element.parentNode !== null) {
 
-                THREE.Object3D.call(this);
+          this.element.parentNode.removeChild(this.element);
 
-                this.element = element;
-                this.element.style.position = 'absolute';
+          for (var i = 0, l = this.children.length; i < l; i++) {
 
-                this.addEventListener('removed', function(event) {
+            this.children[i].dispatchEvent(event);
 
-                  if (this.element.parentNode !== null) {
+          }
 
-                    this.element.parentNode.removeChild(this.element);
+        }
 
-                    for (var i = 0, l = this.children.length; i < l; i++) {
+      });
 
-                      this.children[i].dispatchEvent(event);
+    };
 
-                    }
+    THREE.CSS3DObject.prototype = Object.create(THREE.Object3D.prototype);
 
-                  }
+    THREE.CSS3DSprite = function(element) {
 
-                });
+      THREE.CSS3DObject.call(this, element);
 
-              };
+    };
 
-              THREE.CSS3DObject.prototype = Object.create(THREE.Object3D.prototype);
+    THREE.CSS3DSprite.prototype = Object.create(THREE.CSS3DObject.prototype);
 
-              THREE.CSS3DSprite = function(element) {
+    //
 
-                THREE.CSS3DObject.call(this, element);
+    THREE.CSS3DRenderer = function() {
 
-              };
+      console.log('THREE.CSS3DRenderer', THREE.REVISION);
 
-              THREE.CSS3DSprite.prototype = Object.create(THREE.CSS3DObject.prototype);
+      var _width, _height;
+      var _widthHalf, _heightHalf;
 
-              //
+      var matrix = new THREE.Matrix4();
 
-              THREE.CSS3DRenderer = function() {
+      var domElement = document.createElement('div');
+      domElement.style.overflow = 'hidden';
 
-                console.log('THREE.CSS3DRenderer', THREE.REVISION);
+      domElement.style.WebkitTransformStyle = 'preserve-3d';
+      domElement.style.MozTransformStyle = 'preserve-3d';
+      domElement.style.oTransformStyle = 'preserve-3d';
+      domElement.style.transformStyle = 'preserve-3d';
 
-                var _width, _height;
-                var _widthHalf, _heightHalf;
+      this.domElement = domElement;
 
-                var matrix = new THREE.Matrix4();
+      var cameraElement = document.createElement('div');
 
-                var domElement = document.createElement('div');
-                domElement.style.overflow = 'hidden';
+      cameraElement.style.WebkitTransformStyle = 'preserve-3d';
+      cameraElement.style.MozTransformStyle = 'preserve-3d';
+      cameraElement.style.oTransformStyle = 'preserve-3d';
+      cameraElement.style.transformStyle = 'preserve-3d';
 
-                domElement.style.WebkitTransformStyle = 'preserve-3d';
-                domElement.style.MozTransformStyle = 'preserve-3d';
-                domElement.style.oTransformStyle = 'preserve-3d';
-                domElement.style.transformStyle = 'preserve-3d';
+      domElement.appendChild(cameraElement);
 
-                this.domElement = domElement;
+      this.setClearColor = function() {
 
-                var cameraElement = document.createElement('div');
+      };
 
-                cameraElement.style.WebkitTransformStyle = 'preserve-3d';
-                cameraElement.style.MozTransformStyle = 'preserve-3d';
-                cameraElement.style.oTransformStyle = 'preserve-3d';
-                cameraElement.style.transformStyle = 'preserve-3d';
+      this.setSize = function(width, height) {
 
-                domElement.appendChild(cameraElement);
+        _width = width;
+        _height = height;
 
-                this.setClearColor = function() {
+        _widthHalf = _width / 2;
+        _heightHalf = _height / 2;
 
-                };
+        domElement.style.width = width + 'px';
+        domElement.style.height = height + 'px';
 
-                this.setSize = function(width, height) {
+        cameraElement.style.width = width + 'px';
+        cameraElement.style.height = height + 'px';
 
-                  _width = width;
-                  _height = height;
+      };
 
-                  _widthHalf = _width / 2;
-                  _heightHalf = _height / 2;
+      var epsilon = function(value) {
 
-                  domElement.style.width = width + 'px';
-                  domElement.style.height = height + 'px';
+        return Math.abs(value) < 0.000001 ? 0 : value;
 
-                  cameraElement.style.width = width + 'px';
-                  cameraElement.style.height = height + 'px';
+      };
 
-                };
+      var getCameraCSSMatrix = function(matrix) {
 
-                var epsilon = function(value) {
+        var elements = matrix.elements;
 
-                  return Math.abs(value) < 0.000001 ? 0 : value;
+        return 'matrix3d(' +
+          epsilon(elements[0]) + ',' +
+          epsilon(-elements[1]) + ',' +
+          epsilon(elements[2]) + ',' +
+          epsilon(elements[3]) + ',' +
+          epsilon(elements[4]) + ',' +
+          epsilon(-elements[5]) + ',' +
+          epsilon(elements[6]) + ',' +
+          epsilon(elements[7]) + ',' +
+          epsilon(elements[8]) + ',' +
+          epsilon(-elements[9]) + ',' +
+          epsilon(elements[10]) + ',' +
+          epsilon(elements[11]) + ',' +
+          epsilon(elements[12]) + ',' +
+          epsilon(-elements[13]) + ',' +
+          epsilon(elements[14]) + ',' +
+          epsilon(elements[15]) +
+          ')';
 
-                };
+      };
 
-                var getCameraCSSMatrix = function(matrix) {
+      var getObjectCSSMatrix = function(matrix) {
 
-                  var elements = matrix.elements;
+        var elements = matrix.elements;
 
-                  return 'matrix3d(' +
-                    epsilon(elements[0]) + ',' +
-                    epsilon(-elements[1]) + ',' +
-                    epsilon(elements[2]) + ',' +
-                    epsilon(elements[3]) + ',' +
-                    epsilon(elements[4]) + ',' +
-                    epsilon(-elements[5]) + ',' +
-                    epsilon(elements[6]) + ',' +
-                    epsilon(elements[7]) + ',' +
-                    epsilon(elements[8]) + ',' +
-                    epsilon(-elements[9]) + ',' +
-                    epsilon(elements[10]) + ',' +
-                    epsilon(elements[11]) + ',' +
-                    epsilon(elements[12]) + ',' +
-                    epsilon(-elements[13]) + ',' +
-                    epsilon(elements[14]) + ',' +
-                    epsilon(elements[15]) +
-                    ')';
+        return 'translate3d(-50%,-50%,0) matrix3d(' +
+          epsilon(elements[0]) + ',' +
+          epsilon(elements[1]) + ',' +
+          epsilon(elements[2]) + ',' +
+          epsilon(elements[3]) + ',' +
+          epsilon(-elements[4]) + ',' +
+          epsilon(-elements[5]) + ',' +
+          epsilon(-elements[6]) + ',' +
+          epsilon(-elements[7]) + ',' +
+          epsilon(elements[8]) + ',' +
+          epsilon(elements[9]) + ',' +
+          epsilon(elements[10]) + ',' +
+          epsilon(elements[11]) + ',' +
+          epsilon(elements[12]) + ',' +
+          epsilon(elements[13]) + ',' +
+          epsilon(elements[14]) + ',' +
+          epsilon(elements[15]) +
+          ')';
 
-                };
+      };
 
-                var getObjectCSSMatrix = function(matrix) {
+      var renderObject = function(object, camera) {
 
-                  var elements = matrix.elements;
+        if (object instanceof THREE.CSS3DObject) {
 
-                  return 'translate3d(-50%,-50%,0) matrix3d(' +
-                    epsilon(elements[0]) + ',' +
-                    epsilon(elements[1]) + ',' +
-                    epsilon(elements[2]) + ',' +
-                    epsilon(elements[3]) + ',' +
-                    epsilon(-elements[4]) + ',' +
-                    epsilon(-elements[5]) + ',' +
-                    epsilon(-elements[6]) + ',' +
-                    epsilon(-elements[7]) + ',' +
-                    epsilon(elements[8]) + ',' +
-                    epsilon(elements[9]) + ',' +
-                    epsilon(elements[10]) + ',' +
-                    epsilon(elements[11]) + ',' +
-                    epsilon(elements[12]) + ',' +
-                    epsilon(elements[13]) + ',' +
-                    epsilon(elements[14]) + ',' +
-                    epsilon(elements[15]) +
-                    ')';
+          var style;
 
-                };
+          if (object instanceof THREE.CSS3DSprite) {
 
-                var renderObject = function(object, camera) {
+            // http://swiftcoder.wordpress.com/2008/11/25/constructing-a-billboard-matrix/
 
-                  if (object instanceof THREE.CSS3DObject) {
+            matrix.copy(camera.matrixWorldInverse);
+            matrix.transpose();
+            matrix.copyPosition(object.matrixWorld);
+            matrix.scale(object.scale);
 
-                    var style;
+            matrix.elements[3] = 0;
+            matrix.elements[7] = 0;
+            matrix.elements[11] = 0;
+            matrix.elements[15] = 1;
 
-                    if (object instanceof THREE.CSS3DSprite) {
+            style = getObjectCSSMatrix(matrix);
 
-                      // http://swiftcoder.wordpress.com/2008/11/25/constructing-a-billboard-matrix/
+          } else {
 
-                      matrix.copy(camera.matrixWorldInverse);
-                      matrix.transpose();
-                      matrix.copyPosition(object.matrixWorld);
-                      matrix.scale(object.scale);
+            style = getObjectCSSMatrix(object.matrixWorld);
 
-                      matrix.elements[3] = 0;
-                      matrix.elements[7] = 0;
-                      matrix.elements[11] = 0;
-                      matrix.elements[15] = 1;
+          }
 
-                      style = getObjectCSSMatrix(matrix);
+          var element = object.element;
 
-                    } else {
+          element.style.WebkitTransform = style;
+          element.style.MozTransform = style;
+          element.style.oTransform = style;
+          element.style.transform = style;
 
-                      style = getObjectCSSMatrix(object.matrixWorld);
+          if (element.parentNode !== cameraElement) {
 
-                    }
+            cameraElement.appendChild(element);
 
-                    var element = object.element;
+          }
 
-                    element.style.WebkitTransform = style;
-                    element.style.MozTransform = style;
-                    element.style.oTransform = style;
-                    element.style.transform = style;
+        }
 
-                    if (element.parentNode !== cameraElement) {
+        for (var i = 0, l = object.children.length; i < l; i++) {
 
-                      cameraElement.appendChild(element);
+          renderObject(object.children[i], camera);
 
-                    }
+        }
 
-                  }
+      };
 
-                  for (var i = 0, l = object.children.length; i < l; i++) {
+      this.render = function(scene, camera) {
 
-                    renderObject(object.children[i], camera);
+        var fov = 0.5 / Math.tan(THREE.Math.degToRad(camera.fov * 0.5)) * _height;
 
-                  }
+        domElement.style.WebkitPerspective = fov + "px";
+        domElement.style.MozPerspective = fov + "px";
+        domElement.style.oPerspective = fov + "px";
+        domElement.style.perspective = fov + "px";
 
-                };
+        scene.updateMatrixWorld();
 
-                this.render = function(scene, camera) {
+        if (camera.parent === undefined) camera.updateMatrixWorld();
 
-                  var fov = 0.5 / Math.tan(THREE.Math.degToRad(camera.fov * 0.5)) * _height;
+        camera.matrixWorldInverse.getInverse(camera.matrixWorld);
 
-                  domElement.style.WebkitPerspective = fov + "px";
-                  domElement.style.MozPerspective = fov + "px";
-                  domElement.style.oPerspective = fov + "px";
-                  domElement.style.perspective = fov + "px";
+        var style = "translate3d(0,0," + fov + "px)" + getCameraCSSMatrix(camera.matrixWorldInverse) +
+          " translate3d(" + _widthHalf + "px," + _heightHalf + "px, 0)";
 
-                  scene.updateMatrixWorld();
+        cameraElement.style.WebkitTransform = style;
+        cameraElement.style.MozTransform = style;
+        cameraElement.style.oTransform = style;
+        cameraElement.style.transform = style;
 
-                  if (camera.parent === undefined) camera.updateMatrixWorld();
+        renderObject(scene, camera);
 
-                  camera.matrixWorldInverse.getInverse(camera.matrixWorld);
+      };
 
-                  var style = "translate3d(0,0," + fov + "px)" + getCameraCSSMatrix(camera.matrixWorldInverse) +
-                    " translate3d(" + _widthHalf + "px," + _heightHalf + "px, 0)";
+    };
 
-                  cameraElement.style.WebkitTransform = style;
-                  cameraElement.style.MozTransform = style;
-                  cameraElement.style.oTransform = style;
-                  cameraElement.style.transform = style;
 
-                  renderObject(scene, camera);
+    var table = [
+      "H", "Hydrogen", "1.00794", 1, 1,
+      "He", "Helium", "4.002602", 18, 1,
+      "Li", "Lithium", "#6.941", 1, 2,
+      "Be", "Beryllium", "9.012182", 2, 2,
+      "B", "Boron", "#10.811", 13, 2,
+      "C", "Carbon", "#12.0107", 14, 2,
+      "N", "Nitrogen", "#14.0067", 15, 2,
+      "O", "Oxygen", "#15.9994", 16, 2,
+      "F", "Fluorine", "18.9984032", 17, 2,
+      "Ne", "Neon", "#20.1797", 18, 2,
+      "Na", "Sodium", "22.98976...", 1, 3,
+      "Mg", "Magnesium", "#24.305", 2, 3,
+      "Al", "Aluminium", "26.9815386", 13, 3,
+      "Si", "Silicon", "#28.0855", 14, 3,
+      "P", "Phosphorus", "30.973762", 15, 3,
+      "S", "Sulfur", "#32.065", 16, 3,
+      "Cl", "Chlorine", "#35.453", 17, 3,
+      "Ar", "Argon", "#39.948", 18, 3,
+      "K", "Potassium", "#39.948", 1, 4,
+      "Ca", "Calcium", "#40.078", 2, 4,
+      "Sc", "Scandium", "44.955912", 3, 4,
+      "Ti", "Titanium", "#47.867", 4, 4,
+      "V", "Vanadium", "#50.9415", 5, 4,
+      "Cr", "Chromium", "#51.9961", 6, 4,
+      "Mn", "Manganese", "54.938045", 7, 4,
+      "Fe", "Iron", "#55.845", 8, 4,
+      "Co", "Cobalt", "58.933195", 9, 4,
+      "Ni", "Nickel", "#58.6934", 10, 4,
+      "Cu", "Copper", "#63.546", 11, 4,
+      "Zn", "Zinc", "#65.38", 12, 4,
+      "Ga", "Gallium", "#69.723", 13, 4,
+      "Ge", "Germanium", "#72.63", 14, 4,
+      "As", "Arsenic", "#74.9216", 15, 4,
+      "Se", "Selenium", "#78.96", 16, 4,
+      "Br", "Bromine", "#79.904", 17, 4,
+      "Kr", "Krypton", "#83.798", 18, 4,
+      "Rb", "Rubidium", "#85.4678", 1, 5,
+      "Sr", "Strontium", "#87.62", 2, 5,
+      "Y", "Yttrium", "88.90585", 3, 5,
+      "Zr", "Zirconium", "#91.224", 4, 5,
+      "Nb", "Niobium", "92.90628", 5, 5,
+      "Mo", "Molybdenum", "#95.96", 6, 5,
+      "Tc", "Technetium", "(98)", 7, 5,
+      "Ru", "Ruthenium", "#101.07", 8, 5,
+      "Rh", "Rhodium", "#102.9055", 9, 5,
+      "Pd", "Palladium", "#106.42", 10, 5,
+      "Ag", "Silver", "#107.8682", 11, 5,
+      "Cd", "Cadmium", "#112.411", 12, 5,
+      "In", "Indium", "#114.818", 13, 5,
+      "Sn", "Tin", "#118.71", 14, 5,
+      "Sb", "Antimony", "#121.76", 15, 5,
+      "Te", "Tellurium", "127.6", 16, 5,
+      "I", "Iodine", "126.90447", 17, 5,
+      "Xe", "Xenon", "#131.293", 18, 5,
+      "Cs", "Caesium", "#132.9054", 1, 6,
+      "Ba", "Barium", "#132.9054", 2, 6,
+      "La", "Lanthanum", "138.90547", 4, 9,
+      "Ce", "Cerium", "#140.116", 5, 9,
+      "Pr", "Praseodymium", "140.90765", 6, 9,
+      "Nd", "Neodymium", "#144.242", 7, 9,
+      "Pm", "Promethium", "(145)", 8, 9,
+      "Sm", "Samarium", "#150.36", 9, 9,
+      "Eu", "Europium", "#151.964", 10, 9,
+      "Gd", "Gadolinium", "#157.25", 11, 9,
+      "Tb", "Terbium", "158.92535", 12, 9,
+      "Dy", "Dysprosium", "162.5", 13, 9,
+      "Ho", "Holmium", "164.93032", 14, 9,
+      "Er", "Erbium", "#167.259", 15, 9,
+      "Tm", "Thulium", "168.93421", 16, 9,
+      "Yb", "Ytterbium", "#173.054", 17, 9,
+      "Lu", "Lutetium", "#174.9668", 18, 9,
+      "Hf", "Hafnium", "#178.49", 4, 6,
+      "Ta", "Tantalum", "180.94788", 5, 6,
+      "W", "Tungsten", "#183.84", 6, 6,
+      "Re", "Rhenium", "#186.207", 7, 6,
+      "Os", "Osmium", "#190.23", 8, 6,
+      "Ir", "Iridium", "#192.217", 9, 6,
+      "Pt", "Platinum", "#195.084", 10, 6,
+      "Au", "Gold", "196.966569", 11, 6,
+      "Hg", "Mercury", "#200.59", 12, 6,
+      "Tl", "Thallium", "#204.3833", 13, 6,
+      "Pb", "Lead", "207.2", 14, 6,
+      "Bi", "Bismuth", "#208.9804", 15, 6,
+      "Po", "Polonium", "(209)", 16, 6,
+      "At", "Astatine", "(210)", 17, 6,
+      "Rn", "Radon", "(222)", 18, 6,
+      "Fr", "Francium", "(223)", 1, 7,
+      "Ra", "Radium", "(226)", 2, 7,
+      "Ac", "Actinium", "(227)", 4, 10,
+      "Th", "Thorium", "232.03806", 5, 10,
+      "Pa", "Protactinium", "#231.0588", 6, 10,
+      "U", "Uranium", "238.02891", 7, 10,
+      "Np", "Neptunium", "(237)", 8, 10,
+      "Pu", "Plutonium", "(244)", 9, 10,
+      "Am", "Americium", "(243)", 10, 10,
+      "Cm", "Curium", "(247)", 11, 10,
+      "Bk", "Berkelium", "(247)", 12, 10,
+      "Cf", "Californium", "(251)", 13, 10,
+      "Es", "Einstenium", "(252)", 14, 10,
+      "Fm", "Fermium", "(257)", 15, 10,
+      "Md", "Mendelevium", "(258)", 16, 10,
+      "No", "Nobelium", "(259)", 17, 10,
+      "Lr", "Lawrencium", "(262)", 18, 10,
+      "Rf", "Rutherfordium", "(267)", 4, 7,
+      "Db", "Dubnium", "(268)", 5, 7,
+      "Sg", "Seaborgium", "(271)", 6, 7,
+      "Bh", "Bohrium", "(272)", 7, 7,
+      "Hs", "Hassium", "(270)", 8, 7,
+      "Mt", "Meitnerium", "(276)", 9, 7,
+      "Ds", "Darmstadium", "(281)", 10, 7,
+      "Rg", "Roentgenium", "(280)", 11, 7,
+      "Cn", "Copernicium", "(285)", 12, 7,
+      "Uut", "Unutrium", "(284)", 13, 7,
+      "Fl", "Flerovium", "(289)", 14, 7,
+      "Uup", "Ununpentium", "(288)", 15, 7,
+      "Lv", "Livermorium", "(293)", 16, 7,
+      "Uus", "Ununseptium", "(294)", 17, 7,
+      "Uuo", "Ununoctium", "(294)", 18, 7
+    ];
 
-                };
+    var camera, scene, renderer;
+    var controls;
 
-              };
+    var objects = [];
+    var targets = {
+      table: [],
+      sphere: [],
+      helix: [],
+      grid: []
+    };
 
+    init();
+    animate();
 
-              var table = [
-                "H", "Hydrogen", "1.00794", 1, 1,
-                "He", "Helium", "4.002602", 18, 1,
-                "Li", "Lithium", "#6.941", 1, 2,
-                "Be", "Beryllium", "9.012182", 2, 2,
-                "B", "Boron", "#10.811", 13, 2,
-                "C", "Carbon", "#12.0107", 14, 2,
-                "N", "Nitrogen", "#14.0067", 15, 2,
-                "O", "Oxygen", "#15.9994", 16, 2,
-                "F", "Fluorine", "18.9984032", 17, 2,
-                "Ne", "Neon", "#20.1797", 18, 2,
-                "Na", "Sodium", "22.98976...", 1, 3,
-                "Mg", "Magnesium", "#24.305", 2, 3,
-                "Al", "Aluminium", "26.9815386", 13, 3,
-                "Si", "Silicon", "#28.0855", 14, 3,
-                "P", "Phosphorus", "30.973762", 15, 3,
-                "S", "Sulfur", "#32.065", 16, 3,
-                "Cl", "Chlorine", "#35.453", 17, 3,
-                "Ar", "Argon", "#39.948", 18, 3,
-                "K", "Potassium", "#39.948", 1, 4,
-                "Ca", "Calcium", "#40.078", 2, 4,
-                "Sc", "Scandium", "44.955912", 3, 4,
-                "Ti", "Titanium", "#47.867", 4, 4,
-                "V", "Vanadium", "#50.9415", 5, 4,
-                "Cr", "Chromium", "#51.9961", 6, 4,
-                "Mn", "Manganese", "54.938045", 7, 4,
-                "Fe", "Iron", "#55.845", 8, 4,
-                "Co", "Cobalt", "58.933195", 9, 4,
-                "Ni", "Nickel", "#58.6934", 10, 4,
-                "Cu", "Copper", "#63.546", 11, 4,
-                "Zn", "Zinc", "#65.38", 12, 4,
-                "Ga", "Gallium", "#69.723", 13, 4,
-                "Ge", "Germanium", "#72.63", 14, 4,
-                "As", "Arsenic", "#74.9216", 15, 4,
-                "Se", "Selenium", "#78.96", 16, 4,
-                "Br", "Bromine", "#79.904", 17, 4,
-                "Kr", "Krypton", "#83.798", 18, 4,
-                "Rb", "Rubidium", "#85.4678", 1, 5,
-                "Sr", "Strontium", "#87.62", 2, 5,
-                "Y", "Yttrium", "88.90585", 3, 5,
-                "Zr", "Zirconium", "#91.224", 4, 5,
-                "Nb", "Niobium", "92.90628", 5, 5,
-                "Mo", "Molybdenum", "#95.96", 6, 5,
-                "Tc", "Technetium", "(98)", 7, 5,
-                "Ru", "Ruthenium", "#101.07", 8, 5,
-                "Rh", "Rhodium", "#102.9055", 9, 5,
-                "Pd", "Palladium", "#106.42", 10, 5,
-                "Ag", "Silver", "#107.8682", 11, 5,
-                "Cd", "Cadmium", "#112.411", 12, 5,
-                "In", "Indium", "#114.818", 13, 5,
-                "Sn", "Tin", "#118.71", 14, 5,
-                "Sb", "Antimony", "#121.76", 15, 5,
-                "Te", "Tellurium", "127.6", 16, 5,
-                "I", "Iodine", "126.90447", 17, 5,
-                "Xe", "Xenon", "#131.293", 18, 5,
-                "Cs", "Caesium", "#132.9054", 1, 6,
-                "Ba", "Barium", "#132.9054", 2, 6,
-                "La", "Lanthanum", "138.90547", 4, 9,
-                "Ce", "Cerium", "#140.116", 5, 9,
-                "Pr", "Praseodymium", "140.90765", 6, 9,
-                "Nd", "Neodymium", "#144.242", 7, 9,
-                "Pm", "Promethium", "(145)", 8, 9,
-                "Sm", "Samarium", "#150.36", 9, 9,
-                "Eu", "Europium", "#151.964", 10, 9,
-                "Gd", "Gadolinium", "#157.25", 11, 9,
-                "Tb", "Terbium", "158.92535", 12, 9,
-                "Dy", "Dysprosium", "162.5", 13, 9,
-                "Ho", "Holmium", "164.93032", 14, 9,
-                "Er", "Erbium", "#167.259", 15, 9,
-                "Tm", "Thulium", "168.93421", 16, 9,
-                "Yb", "Ytterbium", "#173.054", 17, 9,
-                "Lu", "Lutetium", "#174.9668", 18, 9,
-                "Hf", "Hafnium", "#178.49", 4, 6,
-                "Ta", "Tantalum", "180.94788", 5, 6,
-                "W", "Tungsten", "#183.84", 6, 6,
-                "Re", "Rhenium", "#186.207", 7, 6,
-                "Os", "Osmium", "#190.23", 8, 6,
-                "Ir", "Iridium", "#192.217", 9, 6,
-                "Pt", "Platinum", "#195.084", 10, 6,
-                "Au", "Gold", "196.966569", 11, 6,
-                "Hg", "Mercury", "#200.59", 12, 6,
-                "Tl", "Thallium", "#204.3833", 13, 6,
-                "Pb", "Lead", "207.2", 14, 6,
-                "Bi", "Bismuth", "#208.9804", 15, 6,
-                "Po", "Polonium", "(209)", 16, 6,
-                "At", "Astatine", "(210)", 17, 6,
-                "Rn", "Radon", "(222)", 18, 6,
-                "Fr", "Francium", "(223)", 1, 7,
-                "Ra", "Radium", "(226)", 2, 7,
-                "Ac", "Actinium", "(227)", 4, 10,
-                "Th", "Thorium", "232.03806", 5, 10,
-                "Pa", "Protactinium", "#231.0588", 6, 10,
-                "U", "Uranium", "238.02891", 7, 10,
-                "Np", "Neptunium", "(237)", 8, 10,
-                "Pu", "Plutonium", "(244)", 9, 10,
-                "Am", "Americium", "(243)", 10, 10,
-                "Cm", "Curium", "(247)", 11, 10,
-                "Bk", "Berkelium", "(247)", 12, 10,
-                "Cf", "Californium", "(251)", 13, 10,
-                "Es", "Einstenium", "(252)", 14, 10,
-                "Fm", "Fermium", "(257)", 15, 10,
-                "Md", "Mendelevium", "(258)", 16, 10,
-                "No", "Nobelium", "(259)", 17, 10,
-                "Lr", "Lawrencium", "(262)", 18, 10,
-                "Rf", "Rutherfordium", "(267)", 4, 7,
-                "Db", "Dubnium", "(268)", 5, 7,
-                "Sg", "Seaborgium", "(271)", 6, 7,
-                "Bh", "Bohrium", "(272)", 7, 7,
-                "Hs", "Hassium", "(270)", 8, 7,
-                "Mt", "Meitnerium", "(276)", 9, 7,
-                "Ds", "Darmstadium", "(281)", 10, 7,
-                "Rg", "Roentgenium", "(280)", 11, 7,
-                "Cn", "Copernicium", "(285)", 12, 7,
-                "Uut", "Unutrium", "(284)", 13, 7,
-                "Fl", "Flerovium", "(289)", 14, 7,
-                "Uup", "Ununpentium", "(288)", 15, 7,
-                "Lv", "Livermorium", "(293)", 16, 7,
-                "Uus", "Ununseptium", "(294)", 17, 7,
-                "Uuo", "Ununoctium", "(294)", 18, 7
-              ];
+    function init() {
 
-              var camera, scene, renderer;
-              var controls;
+      camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000);
+      camera.position.z = 3000;
 
-              var objects = [];
-              var targets = {
-                table: [],
-                sphere: [],
-                helix: [],
-                grid: []
-              };
+      scene = new THREE.Scene();
 
-              init();
-              animate();
+      // table
 
-              function init() {
+      for (var i = 0; i < table.length; i += 5) {
 
-                camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000);
-                camera.position.z = 3000;
+        var element = document.createElement('div');
+        element.className = 'element';
+        element.style.backgroundColor = 'rgba(0,127,127,' + (Math.random() * 0.5 + 0.25) + ')';
 
-                scene = new THREE.Scene();
+        var number = document.createElement('div');
+        number.className = 'number';
+        number.textContent = (i / 5) + 1;
+        element.appendChild(number);
 
-                // table
+        var symbol = document.createElement('div');
+        symbol.className = 'symbol';
+        symbol.textContent = table[i];
+        element.appendChild(symbol);
 
-                for (var i = 0; i < table.length; i += 5) {
+        var details = document.createElement('div');
+        details.className = 'details';
+        details.innerHTML = table[i + 1] + '<br>' + table[i + 2];
+        element.appendChild(details);
 
-                  var element = document.createElement('div');
-                  element.className = 'element';
-                  element.style.backgroundColor = 'rgba(0,127,127,' + (Math.random() * 0.5 + 0.25) + ')';
+        var object = new THREE.CSS3DObject(element);
+        object.position.x = Math.random() * 4000 - 2000;
+        object.position.y = Math.random() * 4000 - 2000;
+        object.position.z = Math.random() * 4000 - 2000;
+        scene.add(object);
 
-                  var number = document.createElement('div');
-                  number.className = 'number';
-                  number.textContent = (i / 5) + 1;
-                  element.appendChild(number);
+        objects.push(object);
 
-                  var symbol = document.createElement('div');
-                  symbol.className = 'symbol';
-                  symbol.textContent = table[i];
-                  element.appendChild(symbol);
+        //
 
-                  var details = document.createElement('div');
-                  details.className = 'details';
-                  details.innerHTML = table[i + 1] + '<br>' + table[i + 2];
-                  element.appendChild(details);
+        var object = new THREE.Object3D();
+        object.position.x = (table[i + 3] * 140) - 1330;
+        object.position.y = -(table[i + 4] * 180) + 990;
 
-                  var object = new THREE.CSS3DObject(element);
-                  object.position.x = Math.random() * 4000 - 2000;
-                  object.position.y = Math.random() * 4000 - 2000;
-                  object.position.z = Math.random() * 4000 - 2000;
-                  scene.add(object);
+        targets.table.push(object);
 
-                  objects.push(object);
+      }
 
-                  //
+      // sphere
 
-                  var object = new THREE.Object3D();
-                  object.position.x = (table[i + 3] * 140) - 1330;
-                  object.position.y = -(table[i + 4] * 180) + 990;
+      var vector = new THREE.Vector3();
 
-                  targets.table.push(object);
+      for (var i = 0, l = objects.length; i < l; i++) {
 
-                }
+        var phi = Math.acos(-1 + (2 * i) / l);
+        var theta = Math.sqrt(l * Math.PI) * phi;
 
-                // sphere
+        var object = new THREE.Object3D();
 
-                var vector = new THREE.Vector3();
+        object.position.x = 800 * Math.cos(theta) * Math.sin(phi);
+        object.position.y = 800 * Math.sin(theta) * Math.sin(phi);
+        object.position.z = 800 * Math.cos(phi);
 
-                for (var i = 0, l = objects.length; i < l; i++) {
+        vector.copy(object.position).multiplyScalar(2);
 
-                  var phi = Math.acos(-1 + (2 * i) / l);
-                  var theta = Math.sqrt(l * Math.PI) * phi;
+        object.lookAt(vector);
 
-                  var object = new THREE.Object3D();
+        targets.sphere.push(object);
 
-                  object.position.x = 800 * Math.cos(theta) * Math.sin(phi);
-                  object.position.y = 800 * Math.sin(theta) * Math.sin(phi);
-                  object.position.z = 800 * Math.cos(phi);
+      }
 
-                  vector.copy(object.position).multiplyScalar(2);
+      // helix
 
-                  object.lookAt(vector);
+      var vector = new THREE.Vector3();
 
-                  targets.sphere.push(object);
+      for (var i = 0, l = objects.length; i < l; i++) {
 
-                }
+        var phi = i * 0.175 + Math.PI;
 
-                // helix
+        var object = new THREE.Object3D();
 
-                var vector = new THREE.Vector3();
+        object.position.x = 900 * Math.sin(phi);
+        object.position.y = -(i * 8) + 450;
+        object.position.z = 900 * Math.cos(phi);
 
-                for (var i = 0, l = objects.length; i < l; i++) {
+        vector.x = object.position.x * 2;
+        vector.y = object.position.y;
+        vector.z = object.position.z * 2;
 
-                  var phi = i * 0.175 + Math.PI;
+        object.lookAt(vector);
 
-                  var object = new THREE.Object3D();
+        targets.helix.push(object);
 
-                  object.position.x = 900 * Math.sin(phi);
-                  object.position.y = -(i * 8) + 450;
-                  object.position.z = 900 * Math.cos(phi);
+      }
 
-                  vector.x = object.position.x * 2;
-                  vector.y = object.position.y;
-                  vector.z = object.position.z * 2;
+      // grid
 
-                  object.lookAt(vector);
+      for (var i = 0; i < objects.length; i++) {
 
-                  targets.helix.push(object);
+        var object = new THREE.Object3D();
 
-                }
+        object.position.x = ((i % 5) * 400) - 800;
+        object.position.y = (-(Math.floor(i / 5) % 5) * 400) + 800;
+        object.position.z = (Math.floor(i / 25)) * 1000 - 2000;
 
-                // grid
+        targets.grid.push(object);
 
-                for (var i = 0; i < objects.length; i++) {
+      }
 
-                  var object = new THREE.Object3D();
+      //
 
-                  object.position.x = ((i % 5) * 400) - 800;
-                  object.position.y = (-(Math.floor(i / 5) % 5) * 400) + 800;
-                  object.position.z = (Math.floor(i / 25)) * 1000 - 2000;
+      renderer = new THREE.CSS3DRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.domElement.style.position = 'absolute';
+      document.getElementById('container').appendChild(renderer.domElement);
 
-                  targets.grid.push(object);
+      //
 
-                }
+      controls = new THREE.TrackballControls(camera, renderer.domElement);
+      controls.rotateSpeed = 0.5;
+      controls.minDistance = 500;
+      controls.maxDistance = 6000;
+      controls.addEventListener('change', render);
 
-                //
+      var button = document.getElementById('table');
+      button.addEventListener('click', function(event) {
 
-                renderer = new THREE.CSS3DRenderer();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                renderer.domElement.style.position = 'absolute';
-                document.getElementById('container').appendChild(renderer.domElement);
+        transform(targets.table, 2000);
 
-                //
+      }, false);
 
-                controls = new THREE.TrackballControls(camera, renderer.domElement);
-                controls.rotateSpeed = 0.5;
-                controls.minDistance = 500;
-                controls.maxDistance = 6000;
-                controls.addEventListener('change', render);
+      var button = document.getElementById('sphere');
+      button.addEventListener('click', function(event) {
 
-                var button = document.getElementById('table');
-                button.addEventListener('click', function(event) {
+        transform(targets.sphere, 2000);
 
-                  transform(targets.table, 2000);
+      }, false);
 
-                }, false);
+      var button = document.getElementById('helix');
+      button.addEventListener('click', function(event) {
 
-                var button = document.getElementById('sphere');
-                button.addEventListener('click', function(event) {
+        transform(targets.helix, 2000);
 
-                  transform(targets.sphere, 2000);
+      }, false);
 
-                }, false);
+      var button = document.getElementById('grid');
+      button.addEventListener('click', function(event) {
 
-                var button = document.getElementById('helix');
-                button.addEventListener('click', function(event) {
+        transform(targets.grid, 2000);
 
-                  transform(targets.helix, 2000);
+      }, false);
 
-                }, false);
+      transform(targets.table, 5000);
 
-                var button = document.getElementById('grid');
-                button.addEventListener('click', function(event) {
+      //
 
-                  transform(targets.grid, 2000);
+      window.addEventListener('resize', onWindowResize, false);
 
-                }, false);
+    }
 
-                transform(targets.table, 5000);
+    function transform(targets, duration) {
 
-                //
+      TWEEN.removeAll();
 
-                window.addEventListener('resize', onWindowResize, false);
+      for (var i = 0; i < objects.length; i++) {
 
-              }
+        var object = objects[i];
+        var target = targets[i];
 
-              function transform(targets, duration) {
+        new TWEEN.Tween(object.position)
+          .to({
+            x: target.position.x,
+            y: target.position.y,
+            z: target.position.z
+          }, Math.random() * duration + duration)
+          .easing(TWEEN.Easing.Exponential.InOut)
+          .start();
 
-                TWEEN.removeAll();
+        new TWEEN.Tween(object.rotation)
+          .to({
+            x: target.rotation.x,
+            y: target.rotation.y,
+            z: target.rotation.z
+          }, Math.random() * duration + duration)
+          .easing(TWEEN.Easing.Exponential.InOut)
+          .start();
 
-                for (var i = 0; i < objects.length; i++) {
+      }
 
-                  var object = objects[i];
-                  var target = targets[i];
+      new TWEEN.Tween(this)
+        .to({}, duration * 2)
+        .onUpdate(render)
+        .start();
 
-                  new TWEEN.Tween(object.position)
-                    .to({
-                      x: target.position.x,
-                      y: target.position.y,
-                      z: target.position.z
-                    }, Math.random() * duration + duration)
-                    .easing(TWEEN.Easing.Exponential.InOut)
-                    .start();
+    }
 
-                  new TWEEN.Tween(object.rotation)
-                    .to({
-                      x: target.rotation.x,
-                      y: target.rotation.y,
-                      z: target.rotation.z
-                    }, Math.random() * duration + duration)
-                    .easing(TWEEN.Easing.Exponential.InOut)
-                    .start();
+    function onWindowResize() {
 
-                }
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
 
-                new TWEEN.Tween(this)
-                  .to({}, duration * 2)
-                  .onUpdate(render)
-                  .start();
+      renderer.setSize(window.innerWidth, window.innerHeight);
 
-              }
+      render();
 
-              function onWindowResize() {
+    }
 
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
+    function animate() {
 
-                renderer.setSize(window.innerWidth, window.innerHeight);
+      requestAnimationFrame(animate);
 
-                render();
+      TWEEN.update();
 
-              }
+      controls.update();
 
-              function animate() {
+    }
 
-                requestAnimationFrame(animate);
+    function render() {
 
-                TWEEN.update();
+      renderer.render(scene, camera);
 
-                controls.update();
-
-              }
-
-              function render() {
-
-                renderer.render(scene, camera);
-
-              }
-              */
+    }
+    */

@@ -149,10 +149,10 @@ TWEEN.Easing = {
       In: function(a) {
         return a * a * a
       },
-      /*                                                  Out: function(a) {
-                                                            return --a * a * a + 1
-                                                        },
-                                                        InOut: function(a) {
+      Out: function(a) {
+        return --a * a * a + 1
+      },
+      /*                                                  InOut: function(a) {
                                                             return 1 > (a*=2) ? 0.5 * a * a * a : 0.5 * ((a -= 2) * a * a + 2)
                                                         }
                                                     },

@@ -301,18 +301,19 @@ TWEEN.Interpolation = {
         var b = TWEEN.Interpolation.Utils.Factorial;
         return b(a) / b(c) / b(a - c)
       },
-      /*                                                                                    Factorial: function() {
-                                                                                              var a = [1];
-                                                                                              return function(c) {
-                                                                                                  var b = 1, d;
-                                                                                                  if (a[c])
-                                                                                                      return a[c];
-                                                                                                  for (d = c; 1 < d; d--)
-                                                                                                      b*=d;
-                                                                                                  return a[c] = b
-                                                                                              }
-                                                                                          }(),
-                                                                                          CatmullRom: function(a, c, b, d, e) {
+      Factorial: function() {
+        var a = [1];
+        return function(c) {
+          var b = 1,
+            d;
+          if (a[c])
+            return a[c];
+          for (d = c; 1 < d; d--)
+            b *= d;
+          return a[c] = b
+        }
+      }(),
+      /*                                                                                    CatmullRom: function(a, c, b, d, e) {
                                                                                               var a = 0.5 * (b - a), d = 0.5 * (d - c), f =
                                                                                               e * e;
                                                                                               return (2 * c - 2 * b + a + d) * e * f + ( - 3 * c + 3 * b - 2 * a - d) * f + a * e + c

@@ -524,9 +524,9 @@ THREE.TrackballControls = function(object, domElement) {
 
                 axis.crossVectors(_rotateStart, _rotateEnd).normalize();
 
-                /*                                                            angle *= _this.rotateSpeed;
+                angle *= _this.rotateSpeed;
 
-                                                                            quaternion.setFromAxisAngle(axis, -angle);
+                /*                                                            quaternion.setFromAxisAngle(axis, -angle);
 
                                                                             _eye.applyQuaternion(quaternion);
                                                                             _this.object.up.applyQuaternion(quaternion);

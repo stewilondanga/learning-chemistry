@@ -20,10 +20,10 @@ var TWEEN = TWEEN || function() {
       removeAll: function() {
         a = []
       },
-      /*            add: function(c) {
-                      a.push(c)
-                  },
-                  remove: function(c) {
+      add: function(c) {
+        a.push(c)
+      },
+      /*            remove: function(c) {
                       c = a.indexOf(c);
                       - 1 !== c && a.splice(c, 1)
                   },

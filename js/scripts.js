@@ -412,14 +412,14 @@ THREE.TrackballControls = function(object, domElement) {
     var startEvent = {
       type: 'start'
     };
-    /*      var endEvent = {
-            type: 'end'
-          };
+    var endEvent = {
+      type: 'end'
+    };
 
 
-          // methods
+    // methods
 
-          this.handleResize = function() {
+    /*      this.handleResize = function() {
 
             if (this.domElement === document) {
 

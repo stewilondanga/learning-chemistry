@@ -83,11 +83,11 @@ TWEEN.Tween = function(a) {
         h = a;
         return this
       };
-    /*                        this.interpolation = function(a) {
-                                r = a;
-                                return this
-                            };
-                            this.chain = function() {
+    this.interpolation = function(a) {
+      r = a;
+      return this
+    };
+    /*                        this.chain = function() {
                                 k = arguments;
                                 return this
                             };

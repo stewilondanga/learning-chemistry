@@ -247,74 +247,74 @@ TWEEN.Easing = {
       In: function(a) {
         return a * a * (2.70158 * a - 1.70158)
       },
-      /*                                                                      Out: function(a) {
-                                                                                return --a * a * (2.70158 * a + 1.70158) + 1
-                                                                            },
-                                                                            InOut: function(a) {
-                                                                                return 1 > (a*=2) ? 0.5 * a * a * (3.5949095 * a - 2.5949095) : 0.5 * ((a -= 2) * a * (3.5949095 * a + 2.5949095) + 2)
-                                                                            }
-                                                                        },
-                                                                        Bounce: {
-                                                                            In: function(a) {
-                                                                                return 1 -
-                                                                                TWEEN.Easing.Bounce.Out(1 - a)
-                                                                            },
-                                                                            Out: function(a) {
-                                                                                return a < 1 / 2.75 ? 7.5625 * a * a : a < 2 / 2.75 ? 7.5625 * (a -= 1.5 / 2.75) * a + 0.75 : a < 2.5 / 2.75 ? 7.5625 * (a -= 2.25 / 2.75) * a + 0.9375 : 7.5625 * (a -= 2.625 / 2.75) * a + 0.984375
-                                                                            },
-                                                                            InOut: function(a) {
-                                                                                return 0.5 > a ? 0.5 * TWEEN.Easing.Bounce.In(2 * a) : 0.5 * TWEEN.Easing.Bounce.Out(2 * a - 1) + 0.5
-                                                                            }
-                                                                        }
-                                                                    };
-                                                                    TWEEN.Interpolation = {
-                                                                        Linear: function(a, c) {
-                                                                            var b = a.length - 1, d = b * c, e = Math.floor(d), f = TWEEN.Interpolation.Utils.Linear;
-                                                                            return 0 > c ? f(a[0], a[1], d) : 1 < c ? f(a[b], a[b - 1], b - d) : f(a[e], a[e + 1 > b ? b: e + 1], d - e)
-                                                                        },
-                                                                        Bezier: function(a, c) {
-                                                                            var b = 0, d = a.length - 1, e = Math.pow, f = TWEEN.Interpolation.Utils.Bernstein, h;
-                                                                            for (h = 0; h <= d; h++)
-                                                                                b += e(1 - c, d - h) * e(c, h) * a[h] * f(d, h);
-                                                                            return b
-                                                                        },
-                                                                        CatmullRom: function(a, c) {
-                                                                            var b = a.length - 1, d = b * c, e = Math.floor(d), f = TWEEN.Interpolation.Utils.CatmullRom;
-                                                                            return a[0] === a[b] ? (0 > c && (e = Math.floor(d = b * (1 + c))), f(a[(e -
-                                                                            1 + b)%b], a[e], a[(e + 1)%b], a[(e + 2)%b], d - e)) : 0 > c ? a[0] - (f(a[0], a[0], a[1], a[1], - d) - a[0]) : 1 < c ? a[b] - (f(a[b], a[b], a[b - 1], a[b - 1], d - b) - a[b]) : f(a[e ? e - 1: 0], a[e], a[b < e + 1 ? b: e + 1], a[b < e + 2 ? b: e + 2], d - e)
-                                                                        },
-                                                                        Utils: {
-                                                                            Linear: function(a, c, b) {
-                                                                                return (c - a) * b + a
-                                                                            },
-                                                                            Bernstein: function(a, c) {
-                                                                                var b = TWEEN.Interpolation.Utils.Factorial;
-                                                                                return b(a) / b(c) / b(a - c)
-                                                                            },
-                                                                            Factorial: function() {
-                                                                                var a = [1];
-                                                                                return function(c) {
-                                                                                    var b = 1, d;
-                                                                                    if (a[c])
-                                                                                        return a[c];
-                                                                                    for (d = c; 1 < d; d--)
-                                                                                        b*=d;
-                                                                                    return a[c] = b
-                                                                                }
-                                                                            }(),
-                                                                            CatmullRom: function(a, c, b, d, e) {
-                                                                                var a = 0.5 * (b - a), d = 0.5 * (d - c), f =
-                                                                                e * e;
-                                                                                return (2 * c - 2 * b + a + d) * e * f + ( - 3 * c + 3 * b - 2 * a - d) * f + a * e + c
-                                                                            }
-                                                                        }
-                                                                    };
+      Out: function(a) {
+        return --a * a * (2.70158 * a + 1.70158) + 1
+      },
+      /*                                                                        InOut: function(a) {
+                                                                                  return 1 > (a*=2) ? 0.5 * a * a * (3.5949095 * a - 2.5949095) : 0.5 * ((a -= 2) * a * (3.5949095 * a + 2.5949095) + 2)
+                                                                              }
+                                                                          },
+                                                                          Bounce: {
+                                                                              In: function(a) {
+                                                                                  return 1 -
+                                                                                  TWEEN.Easing.Bounce.Out(1 - a)
+                                                                              },
+                                                                              Out: function(a) {
+                                                                                  return a < 1 / 2.75 ? 7.5625 * a * a : a < 2 / 2.75 ? 7.5625 * (a -= 1.5 / 2.75) * a + 0.75 : a < 2.5 / 2.75 ? 7.5625 * (a -= 2.25 / 2.75) * a + 0.9375 : 7.5625 * (a -= 2.625 / 2.75) * a + 0.984375
+                                                                              },
+                                                                              InOut: function(a) {
+                                                                                  return 0.5 > a ? 0.5 * TWEEN.Easing.Bounce.In(2 * a) : 0.5 * TWEEN.Easing.Bounce.Out(2 * a - 1) + 0.5
+                                                                              }
+                                                                          }
+                                                                      };
+                                                                      TWEEN.Interpolation = {
+                                                                          Linear: function(a, c) {
+                                                                              var b = a.length - 1, d = b * c, e = Math.floor(d), f = TWEEN.Interpolation.Utils.Linear;
+                                                                              return 0 > c ? f(a[0], a[1], d) : 1 < c ? f(a[b], a[b - 1], b - d) : f(a[e], a[e + 1 > b ? b: e + 1], d - e)
+                                                                          },
+                                                                          Bezier: function(a, c) {
+                                                                              var b = 0, d = a.length - 1, e = Math.pow, f = TWEEN.Interpolation.Utils.Bernstein, h;
+                                                                              for (h = 0; h <= d; h++)
+                                                                                  b += e(1 - c, d - h) * e(c, h) * a[h] * f(d, h);
+                                                                              return b
+                                                                          },
+                                                                          CatmullRom: function(a, c) {
+                                                                              var b = a.length - 1, d = b * c, e = Math.floor(d), f = TWEEN.Interpolation.Utils.CatmullRom;
+                                                                              return a[0] === a[b] ? (0 > c && (e = Math.floor(d = b * (1 + c))), f(a[(e -
+                                                                              1 + b)%b], a[e], a[(e + 1)%b], a[(e + 2)%b], d - e)) : 0 > c ? a[0] - (f(a[0], a[0], a[1], a[1], - d) - a[0]) : 1 < c ? a[b] - (f(a[b], a[b], a[b - 1], a[b - 1], d - b) - a[b]) : f(a[e ? e - 1: 0], a[e], a[b < e + 1 ? b: e + 1], a[b < e + 2 ? b: e + 2], d - e)
+                                                                          },
+                                                                          Utils: {
+                                                                              Linear: function(a, c, b) {
+                                                                                  return (c - a) * b + a
+                                                                              },
+                                                                              Bernstein: function(a, c) {
+                                                                                  var b = TWEEN.Interpolation.Utils.Factorial;
+                                                                                  return b(a) / b(c) / b(a - c)
+                                                                              },
+                                                                              Factorial: function() {
+                                                                                  var a = [1];
+                                                                                  return function(c) {
+                                                                                      var b = 1, d;
+                                                                                      if (a[c])
+                                                                                          return a[c];
+                                                                                      for (d = c; 1 < d; d--)
+                                                                                          b*=d;
+                                                                                      return a[c] = b
+                                                                                  }
+                                                                              }(),
+                                                                              CatmullRom: function(a, c, b, d, e) {
+                                                                                  var a = 0.5 * (b - a), d = 0.5 * (d - c), f =
+                                                                                  e * e;
+                                                                                  return (2 * c - 2 * b + a + d) * e * f + ( - 3 * c + 3 * b - 2 * a - d) * f + a * e + c
+                                                                              }
+                                                                          }
+                                                                      };
 
 
-                                                                    /**
-                                                                     * @author Eberhard Graether / http://egraether.com/
-                                                                     * @author Mark Lundin 	/ http://mark-lundin.com
-                                                                     */
+                                                                      /**
+                                                                       * @author Eberhard Graether / http://egraether.com/
+                                                                       * @author Mark Lundin 	/ http://mark-lundin.com
+                                                                       */
 
       THREE.TrackballControls = function(object, domElement) {
 

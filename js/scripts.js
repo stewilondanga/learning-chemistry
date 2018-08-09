@@ -379,9 +379,9 @@ THREE.TrackballControls = function(object, domElement) {
 
     var EPS = 0.000001;
 
-    /*  var lastPosition = new THREE.Vector3();
+    var lastPosition = new THREE.Vector3();
 
-      var _state = STATE.NONE,
+    /*  var _state = STATE.NONE,
         _prevState = STATE.NONE,
 
         _eye = new THREE.Vector3(),

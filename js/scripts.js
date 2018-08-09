@@ -99,11 +99,11 @@ TWEEN.Tween = function(a) {
       n = a;
       return this
     };
-    /*                            this.onComplete = function(a) {
-                                    p = a;
-                                    return this
-                                };
-                                this.update = function(e) {
+    this.onComplete = function(a) {
+      p = a;
+      return this
+    };
+    /*                            this.update = function(e) {
                                     if (e < f)
                                         return !0;
                                     !1 === m && (null !== l && l.call(a), m=!0);

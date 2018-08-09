@@ -87,11 +87,11 @@ TWEEN.Tween = function(a) {
       r = a;
       return this
     };
-    /*                        this.chain = function() {
-                                k = arguments;
-                                return this
-                            };
-                            this.onStart = function(a) {
+    this.chain = function() {
+      k = arguments;
+      return this
+    };
+    /*                        this.onStart = function(a) {
                                 l = a;
                                 return this
                             };

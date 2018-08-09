@@ -442,17 +442,17 @@ THREE.TrackballControls = function(object, domElement) {
 
     };
 
-    /*                this.handleEvent = function(event) {
+    this.handleEvent = function(event) {
 
-                      if (typeof this[event.type] == 'function') {
+      if (typeof this[event.type] == 'function') {
 
-                        this[event.type](event);
+        this[event.type](event);
 
-                      }
+      }
 
-                    };
+    };
 
-                    this.getMouseOnScreen = function(pageX, pageY, vector) {
+    /*                this.getMouseOnScreen = function(pageX, pageY, vector) {
 
                       return vector.set(
                         (pageX - _this.screen.left) / _this.screen.width,

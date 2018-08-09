@@ -74,11 +74,11 @@ TWEEN.Tween = function(a) {
       TWEEN.remove(this);
       return this
     };
-    /*                        this.delay = function(a) {
-                                e = a;
-                                return this
-                            };
-                            this.easing =
+    this.delay = function(a) {
+      e = a;
+      return this
+    };
+    /*                        this.easing =
                             function(a) {
                                 h = a;
                                 return this

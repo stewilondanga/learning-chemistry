@@ -78,12 +78,12 @@ TWEEN.Tween = function(a) {
       e = a;
       return this
     };
-    /*                        this.easing =
-                            function(a) {
-                                h = a;
-                                return this
-                            };
-                            this.interpolation = function(a) {
+    this.easing =
+      function(a) {
+        h = a;
+        return this
+      };
+    /*                        this.interpolation = function(a) {
                                 r = a;
                                 return this
                             };
